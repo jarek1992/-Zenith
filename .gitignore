@@ -1,39 +1,59 @@
+# build and IDE specific
 build/
-.vscode
-*.ppm
+out/
 .vs/
+.vscode/
+bin/
+obj/
+vcpkg_installed/
+vcpkg/
 
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+# compiled binaries (global)
 *.exe
 *.out
 *.app
+*.o
+*.obj
+*.slo
+*.lo
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+*.la
+*.lai
+*.pdb
+*.ilk
 
+# OIDN structure preservation
+libs/oidn/bin/*
+libs/oidn/lib/*
+libs/oidn/include/*
 
+!**/ .gitkeep
+
+# assets & textures
+!assets/
+!assets/**/*.png
+!assets/**/*.jpg
+!assets/**/*.hdr
+!assets/**/*.obj
+!media/
+!media/**/*
+
+# render outputs (ignore)
+*.ppm
+*.png
+*.jpg
+output/
+screenshots/
+
+# temporary/misc
+*.d
+*.gch
+*.pch
+*.mod
+*.smod
+.DS_Store
+Thumbs.db

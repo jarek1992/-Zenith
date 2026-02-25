@@ -1,0 +1,12 @@
+﻿{
+  "name": "ray-tracer",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "sdl3",
+    {
+      "name": "imgui",
+      "features": [ "sdl3-binding", "opengl3-binding" ]
+    },
+    "glad"
+  ]
+}
