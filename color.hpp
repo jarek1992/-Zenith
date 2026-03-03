@@ -13,8 +13,7 @@ void write_color(
 	int samples_per_pixel,
 	post_processor& post,
 	double u,
-	double v
-) {
+	double v) {
 	double scale = 1.0 / samples_per_pixel;
 
 	//average from samples(linear color)

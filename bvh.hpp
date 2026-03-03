@@ -13,7 +13,7 @@ public:
 	}
 
 	bvh_node(std::vector<shared_ptr<hittable>>& objects, size_t start, size_t end) {
-		// Randomly choose axis (0,1 or 2) to split on
+		//randomly choose axis (0,1 or 2) to split on
 		int axis = random_int(0, 2);
 
 		auto comparator = (axis == 0) ? box_x_compare
@@ -24,18 +24,15 @@ public:
 
 		if (object_span == 1) {
 			left = right = objects[start];
-		}
-		else if (object_span == 2) {
+		} else if (object_span == 2) {
 			if (comparator(objects[start], objects[start + 1])) {
 				left = objects[start];
 				right = objects[start + 1];
-			}
-			else {
+			} else {
 				left = objects[start + 1];
 				right = objects[start];
 			}
-		}
-		else {
+		} else {
 			//sort objects and split in half
 			std::sort(objects.begin() + start, objects.begin() + end, comparator);
 
@@ -69,8 +66,10 @@ private:
 
 	//comparison functions for sorting
 	static bool box_compare(
-		const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis_index
-	) {
+		const shared_ptr<hittable> a, 
+		const shared_ptr<hittable> b,
+		int axis_index) {
+		
 		auto a_axis_range = a->bounding_box().axis(axis_index);
 		auto b_axis_range = b->bounding_box().axis(axis_index);
 		return a_axis_range.min < b_axis_range.min;

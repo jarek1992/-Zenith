@@ -10,7 +10,9 @@ public:
 	double e[3];
 
 	//default constructor: initializes to (0, 0, 0)
-	constexpr vec3() : e{ 0, 0, 0 } {}
+	constexpr vec3() 
+		: e{ 0, 0, 0 } 
+	{}
 
 	//parameterized constructor: initializes to specific values (e0, e1, e2)
 	constexpr vec3(double e0, double e1, double e2) : e{ e0, e1, e2 } {}
@@ -46,6 +48,7 @@ public:
 		e[2] += v.e[2];
 		return *this;
 	}
+
 	//multiplication assignment (v *= scalar)
 	vec3& operator*=(double t) {
 		e[0] *= t;
@@ -54,6 +57,7 @@ public:
 		return *this;
 	}
 
+	//component-wise multiplication assignment (v *= u)
 	vec3& operator*=(const vec3& v) {
 		e[0] *= v.e[0];
 		e[1] *= v.e[1];
@@ -160,7 +164,9 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 //return unit vector with length = 1 with the same direction to v
 inline vec3 unit_vector(const vec3& v) {
 	double len = v.length();
-	if (len < 1e-8) return vec3(0, 0, 0); // Zabezpieczenie przed zerem
+	if (len < 1e-8) { 
+		return vec3(0, 0, 0); //safeguard against division by zero
+	} 
 	return v / len;
 }
 
@@ -187,10 +193,11 @@ inline vec3 random_unit_vector() {
 //generate a random vector on the hemisphere defined by the normal
 inline vec3 random_on_hemisphere(const vec3& normal) {
 	vec3 on_unit_sphere = random_unit_vector();
-	if (dot(on_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
-		return on_unit_sphere;
-	else
+	if (dot(on_unit_sphere, normal) > 0.0) {
+		return on_unit_sphere; //in the same hemisphere as the normal
+	} else {
 		return -on_unit_sphere;
+	}
 }
 
 //vec3 reflection function

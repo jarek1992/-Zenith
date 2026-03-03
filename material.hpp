@@ -22,8 +22,8 @@ public:
 	//   @return true if the ray is scattered, false otherwise.
 
 	virtual bool scatter(
-		const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
-	) const = 0;
+		const ray& r_in, const hit_record& rec, 
+		color& attenuation, ray& scattered) const = 0;
 
 	//denoising function
 	virtual color get_albedo(const hit_record& rec) const {
@@ -63,6 +63,7 @@ public:
 		, my_bump_texture(bump)
 		, bump_strength(strength)
 	{}
+
 	//constructor for texture albedo
 	lambertian(shared_ptr<texture>tex, shared_ptr<texture> bump = nullptr, double strength = 1.0)
 		: tex(tex)
@@ -171,6 +172,7 @@ public:
 		, my_bump_texture(nullptr)
 		, bump_strength(1.0)
 	{}
+
 	//constructor for bump mapping dielectric (color and strength of bump)
 	dielectric(double ri, const color& a, shared_ptr<texture> bump, double strength)
 		: refraction_index(ri)
@@ -178,6 +180,7 @@ public:
 		, my_bump_texture(bump)
 		, bump_strength(strength)
 	{}
+
 	//constructor for bump mapping dielectric (default white color)
 	dielectric(double ri, shared_ptr<texture> bump, double strength)
 		: refraction_index(ri)
@@ -244,15 +247,17 @@ public:
 	diffuse_light(shared_ptr<texture> a)
 		: emit(a)
 	{}
+
 	diffuse_light(color c)
 		: emit(make_shared<solid_color>(c))
 	{}
 
 	bool scatter(
-		const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
-	) const override {
+		const ray& r_in, const hit_record& rec, 
+		color& attenuation, ray& scattered) const override {
 		return false; //no scattering for light-emitting materials
 	}
+
 	color emitted(double u, double v, const point3& p) const {
 		return emit->value(u, v, p);
 	}

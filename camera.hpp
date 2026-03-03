@@ -190,13 +190,11 @@ public:
 				//c contains exposure, bloom and sharpening if enabled
 				//apply processonly for aces, contrast and gamma 
 				final_framebuffer[idx] = post.process(c, u, v);
-			}
-			else if (is_light) {
+			} else if (is_light) {
 				//for reflection/refraction only exposure + process
 				double ev_multiplier = std::pow(2.0, post.exposure);
 				final_framebuffer[idx] = post.process(c * ev_multiplier, u, v);
-			}
-			else {
+			} else {
 				//(albedo, normals, z-depth)
 				//clamp and gamma
 				c = color(std::clamp(c.x(), 0.0, 1.0),
@@ -214,11 +212,10 @@ public:
 		auto prepare_buffer = [&](std::vector<color>& buf) {
 			if (buf.size() != required_size) {
 				buf.resize(required_size, color(0.0, 0.0, 0.0));
-			}
-			else {
+			} else {
 				std::fill(buf.begin(), buf.end(), color(0.0, 0.0, 0.0));
 			}
-			};
+		};
 
 		prepare_buffer(render_accumulator);
 		prepare_buffer(denoise_buffer);
@@ -419,7 +416,7 @@ private:
 		this->lines_rendered = 0;
 
 		//reset main framebuffer 
-		std::fill(framebuffer.begin(), framebuffer.end(), color(0, 0, 0));
+		std::fill(framebuffer.begin(), framebuffer.end(), color(0.0, 0.0, 0.0));
 
 		//local atomic counter for progress bar in this function
 		std::atomic<int> lines_done = 0;
@@ -511,8 +508,7 @@ private:
 
 									if (is_specular) {
 										pixel_reflection += attenuation * scattered_color;
-									}
-									else if (dot(scattered.direction(), rec.normal) < 0) {
+									} else if (dot(scattered.direction(), rec.normal) < 0) {
 										//if not mirror check if glass 
 										pixel_refraction += attenuation * scattered_color;
 									}
@@ -554,12 +550,14 @@ private:
 					local_lines_done = 0; //reset locally
 				}
 			}
-			};
+		};
 
 		//split the work between threads
 		int rows_per_thread = image_height / num_threads;
 		int extra = image_height % num_threads;
 		int start = 0;
+
+		//create threads with their assigned block of rows
 		for (int t = 0; t < num_threads; ++t) {
 			int end = start + rows_per_thread + (t < extra ? 1 : 0);
 			threads.emplace_back(render_rows, start, end);
@@ -604,14 +602,14 @@ private:
 				return 0.0f;
 			}
 			return static_cast<float>(v);
-			};
+		};
 
 		for (size_t i = 0; i < framebuffer.size(); ++i) {
 			f_color[i * 3 + 0] = static_cast<float>(framebuffer[i].x());
 			f_color[i * 3 + 1] = static_cast<float>(framebuffer[i].y());
 			f_color[i * 3 + 2] = static_cast<float>(framebuffer[i].z());
 
-			// UŻYJ SWOICH PRAWDZIWYCH, UŚREDNIONYCH DANYCH
+			//cleaning auxiliary buffers for AI (albedo and normals)
 			f_albedo[i * 3 + 0] = clean_val(albedo_buffer[i].x());
 			f_albedo[i * 3 + 1] = clean_val(albedo_buffer[i].y());
 			f_albedo[i * 3 + 2] = clean_val(albedo_buffer[i].z());
@@ -621,7 +619,7 @@ private:
 			f_normal[i * 3 + 2] = clean_val(normal_buffer[i].z());
 		}
 
-		//OIDNBuffer for full GPU/CPU compatibility
+		//OIDN Buffer for full GPU/CPU compatibility
 		size_t bufferSize = static_cast<size_t>(width) * height * 3 * sizeof(float);
 		oidn::BufferRef colorBuf = device.newBuffer(bufferSize);
 		oidn::BufferRef albedoBuf = device.newBuffer(bufferSize);
@@ -641,6 +639,7 @@ private:
 		filter.setImage("color", colorBuf, oidn::Format::Float3, width, height);
 		filter.setImage("albedo", albedoBuf, oidn::Format::Float3, width, height);
 		filter.setImage("normal", normalBuf, oidn::Format::Float3, width, height);
+		
 		//output filter(save result back to f_color)
 		filter.setImage("output", colorBuf, oidn::Format::Float3, width, height);
 
@@ -786,6 +785,7 @@ private:
 		return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
 	}
 
+	//returns the background color based on the ray direction and environment settings
 	color get_background_color(const ray& r, const EnvironmentSettings& env) const {
 		vec3 unit_dir = unit_vector(r.direction());
 
@@ -915,8 +915,7 @@ private:
 				if (i > 10 && accumulated_attenuation.length() < 0.00001) {
 					break;
 				}
-			}
-			else {
+			} else {
 				//material absorbed the ray, no more light is gathered
 				break;
 			}
@@ -947,10 +946,10 @@ private:
 		ray scattered;
 		color attenuation;
 
-		// Obsługujemy pierwsze rozproszenie
+		//operate first scattering
 		if (first_rec.mat->scatter(r, first_rec, attenuation, scattered)) {
 			accumulated_attenuation *= attenuation;
-			// Reszta odbić leci już normalnie w pętli (od i=1 do depth)
+			//continue with the rest of the ray bounces
 			return accumulated_light + accumulated_attenuation * ray_color(scattered, world, depth - 1, env);
 		}
 

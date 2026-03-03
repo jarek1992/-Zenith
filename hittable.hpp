@@ -2,8 +2,10 @@
 
 #include "aabb.hpp"
 
-class material; //forward declaration to avoid circular dependency
+//forward declaration to avoid circular dependency
 //holds information about the intersection between a ray and an object
+class material; 
+
 class hit_record {
 public:
 	point3 p;         //intersection point

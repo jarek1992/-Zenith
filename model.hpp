@@ -43,14 +43,14 @@ public:
 
 		hittable_list triangles;
 
-		//get_v (lambda)
+		//get_v(lambda)
 		auto get_v = [&](tinyobj::index_t idx) {
 			return point3(
 				(attrib.vertices[3 * idx.vertex_index + 0] - center_offset.x()) * scale,
 				(attrib.vertices[3 * idx.vertex_index + 1] - center_offset.y()) * scale,
 				(attrib.vertices[3 * idx.vertex_index + 2] - center_offset.z()) * scale
 			);
-			};
+		};
 
 		//create triangles from loaded model using offset and scale
 		for (const auto& shape : shapes) {
@@ -90,6 +90,7 @@ public:
 				index_offset += 3;
 			}
 		}
+
 		//BVH only for this model
 		mesh_bvh = make_shared<bvh_node>(triangles);
 

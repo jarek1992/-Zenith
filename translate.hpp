@@ -13,15 +13,16 @@ public:
 	}
 
 	virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-
 		//world -> local(move ray in opposite direction of offset)
 		ray moved_r(
 			r.origin() - offset, 
 			r.direction()
 		);
 
-		if (!ptr->hit(moved_r, ray_t, rec))
+		if (!ptr->hit(moved_r, ray_t, rec)) {
 			return false;
+		}
+
 		//local -> world(move intersection point back)
 		rec.p += offset;
 		//normal remains the same(no rotation applied)
@@ -38,5 +39,4 @@ private:
 	shared_ptr<hittable> ptr;
 	vec3 offset;
 	aabb bbox;
-
 };

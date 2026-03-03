@@ -46,13 +46,13 @@ inline int random_int(int min, int max) {
 #include "vec3.hpp"
 
 inline color apply_aces(color x) {
-	//Pancerne zabezpieczenie przed ujemnymi wartościami (NaN killer)
+	//safeguard against negative values (NaN killer)
 	auto safe_x = [](double v) {
-		// Zabezpieczenie przed NaN i nieskończonością
+		//safeguard against NaN and infinity
 		if (std::isnan(v) || std::isinf(v)) {
 			return 0.0; 
 		} 
-		double val = std::max(0.0, v); // Nigdy poniżej zera
+		double val = std::max(0.0, v); //never below 0
 
 		const double a = 2.51;
 		const double b = 0.03;
@@ -102,6 +102,7 @@ inline vec3 direction_from_spherical(double elevation_deg, double azimuth_deg) {
 	);
 }
 
+//check if any component of the color is NaN
 inline bool is_nan(const color& c) {
 	return std::isnan(c.x()) || std::isnan(c.y()) || std::isnan(c.z());
 }

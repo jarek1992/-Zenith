@@ -10,17 +10,16 @@ class interval {
 public:
 	double min, max;
 
-	// Default interval constructor is empty
+	//default interval constructor is empty
 	interval()
 		: min(+std::numeric_limits<double>::infinity()) // Use std::numeric_limits to get infinity
 		, max(-std::numeric_limits<double>::infinity()) // Use std::numeric_limits to get negative infinity
-	{
-	}
+	{}
 
-	// parametrical constructor with interval min and max
+	//parametrical constructor with interval min and max
 	interval(double min, double max) : min(min), max(max) {}
 
-	// constructor combining two intervals
+	//constructor combining two intervals
 	interval(const interval& a, const interval& b) {
 		min = std::fmin(a.min, b.min);
 		max = std::fmax(a.max, b.max);

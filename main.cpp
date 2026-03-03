@@ -11,6 +11,7 @@
 #include "bvh.hpp"
 #include "environment.hpp"
 #include "scene_management.hpp"
+
 //stb libraries (to save)
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -24,6 +25,7 @@
 #include <chrono>
 #include <cstdarg>
 
+//function to create an OpenGL texture from a color buffer (used for displaying the rendered image in ImGui)
 GLuint create_texture_from_buffer(const std::vector<color>& buffer, int width, int height) {
 	GLuint textureID;
 	glGenTextures(1, &textureID);
@@ -45,12 +47,14 @@ GLuint create_texture_from_buffer(const std::vector<color>& buffer, int width, i
 	return textureID;
 }
 
+//simple logging system for the engine with timestamp and severity levels, also stores recent frame times for performance graphing
 struct AppLog {
 	std::vector<std::string> items;
 	float frame_times[90] = { 0 }; //circular buffer for frame times (last 90 frames ~ 3 seconds at 30fps)
 	int offset = 0;
 	int last_lines_count = 0;
 
+	//function to add a log entry with timestamp and formatting support (like printf)
 	void add_log(const char* fmt, ...) {
 		char buf[256];
 		va_list args;
@@ -68,6 +72,7 @@ struct AppLog {
 		}
 	}
 
+	//function to draw the performance metrics and logs in the ImGui window
 	void draw_tab_content(const camera& cam, bool is_rendering) {
 		//performance section tab
 		ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Performance Metrics");
@@ -87,7 +92,7 @@ struct AppLog {
 
 		ImGui::Text("FPS: %.1f", fps);
 
-		// Obliczamy ile nowych linii przybyło od ostatniego rysowania GUI
+		//calculate how many new lines have been rendered since the last GUI update
 		int lines_this_frame = cam.lines_rendered - last_lines_count;
 		if (lines_this_frame < 0) { 
 			lines_this_frame = 0; // reset przy nowym renderze
@@ -168,13 +173,14 @@ struct AppLog {
 	}
 };
 
+//global instance of the log system
 static AppLog engine_info;
 
 int main(int argc, char* argv[]) {
 	engine_info.add_log("[Render] -Zenith Engine Started");
 	#ifdef _OPEMMP
 		engine_info.add_log("[Render] OpenMP initialized with %d threads.", omp_get_max_threads());
-	#endif // _OPEMMP
+	#endif //_OPEMMP
 
 	// - 1. LOADING MATERIALS FROM THE LIBRARY -
 	MaterialLibrary mat_lib;
@@ -351,6 +357,7 @@ int main(int argc, char* argv[]) {
 					);
 					should_restart = true;
 				}
+
 				//look at
 				if (ImGui::InputScalarN("Look At", ImGuiDataType_Double, lookat_buf, 3)) {
 					cam.lookat = point3(lookat_buf[0], lookat_buf[1], lookat_buf[2]);
@@ -361,8 +368,10 @@ int main(int argc, char* argv[]) {
 					);
 					should_restart = true;
 				}
+
 				//up vector
 				ImGui::Text("Up Vector");
+
 				//create a temporary buffer for InputScalarN to handle the data
 				vup_buf[0] = cam.vup.x();
 				vup_buf[1] = cam.vup.y();
@@ -379,6 +388,7 @@ int main(int argc, char* argv[]) {
 					should_restart = true;
 				}
 				ImGui::PopID();
+
 				//reset and normalize
 				if (ImGui::Button("Reset Up (0,1,0)")) {
 					cam.vup = vec3(0, 1, 0);
@@ -396,6 +406,7 @@ int main(int argc, char* argv[]) {
 					should_restart = true;
 				}
 				ImGui::SeparatorText("Optics");
+
 				//fov
 				float vfov_f = static_cast<float>(cam.vfov);
 				if (ImGui::SliderFloat("FOV", &vfov_f, 1.0f, 120.0f)) {
@@ -425,6 +436,7 @@ int main(int argc, char* argv[]) {
 				if (ImGui::IsItemDeactivatedAfterEdit()) {
 					engine_info.add_log("[Config] Camera focus distance finalized at %.2f", cam.focus_dist);
 				}
+
 				//samples per pixel
 				ImGui::SeparatorText("Quality");
 				if (ImGui::InputInt("Samples per Pixel", &cam.samples_per_pixel)) {
@@ -434,6 +446,7 @@ int main(int argc, char* argv[]) {
 					engine_info.add_log("[Config] Samples per Pixel set to %d", cam.samples_per_pixel);
 					should_restart = true;
 				}
+
 				//max depth
 				if (ImGui::SliderInt("Max Depth", &cam.max_depth, 1, 100)) {
 					should_restart = true;
@@ -445,6 +458,7 @@ int main(int argc, char* argv[]) {
 				ImGui::SeparatorText("Render Passes");
 				//dropdown passes
 				ImGui::Text("Active View:");
+
 				//reference to static array of pass names in camera class
 				if (ImGui::BeginCombo("##SelectPass", camera::pass_names[static_cast<int>(cam.current_display_pass)])) {
 					for (int n = 0; n < 7; n++) {
@@ -495,7 +509,6 @@ int main(int argc, char* argv[]) {
 						engine_info.add_log("[Config] Active view reset to RGB because the selected pass was deactivated");
 					}
 				};
-
 
 				if (ImGui::Checkbox("Denoise", &cam.use_denoiser)) {
 					check_pass_safety(cam.use_denoiser, render_pass::DENOISE);
@@ -553,7 +566,6 @@ int main(int argc, char* argv[]) {
 					(float)env.background_color.y(),
 					(float)env.background_color.z()
 				};
-
 
 				//desychronization and crash prevention
 				if (!ImGui::IsAnyItemActive() && env.needs_ui_sync) {
@@ -650,7 +662,6 @@ int main(int argc, char* argv[]) {
 							const bool is_selected = (env.current_hdr_name == cam.hdr_files[n]);
 
 							if (ImGui::Selectable(cam.hdr_files[n].c_str(), is_selected)) {
-
 								//loading
 								env.load_hdr(HDR_DIR + cam.hdr_files[n]);
 								engine_info.add_log("[Config] Loaded HDR map: %s", cam.hdr_files[n].c_str());
@@ -692,6 +703,7 @@ int main(int argc, char* argv[]) {
 						env.hdri_roll = 0.0;
 						should_restart = true;
 					}
+
 					//Y-axis rotation
 					if (ImGui::SliderFloat("Rotation (Y-axis)", &rot_deg, -180.0f, 180.0f)) {
 						env.hdri_rotation = degrees_to_radians(rot_deg);
@@ -869,6 +881,7 @@ int main(int argc, char* argv[]) {
 						);
 						should_restart = true;
 					}
+
 					//button to normalize the sun direction vector
 					ImGui::SameLine();
 					if (ImGui::Button("Normalize")) {
@@ -909,6 +922,7 @@ int main(int argc, char* argv[]) {
 
 				ImGui::EndTabItem();
 			}
+
 			//post-processing tab
 			if (ImGui::BeginTabItem("Post-Process")) {
 				//buffers definition
@@ -917,12 +931,12 @@ int main(int argc, char* argv[]) {
 					(float)my_post.color_balance.y(),
 					(float)my_post.color_balance.z()
 				};
+
 				//synchronization 
 				if (!ImGui::IsItemActive()) {
 					col_bal[0] = (float)my_post.color_balance.x();
 					col_bal[1] = (float)my_post.color_balance.y();
 					col_bal[2] = (float)my_post.color_balance.z();
-
 				}
 
 				ImGui::SeparatorText("Debug Views");
@@ -997,7 +1011,7 @@ int main(int argc, char* argv[]) {
 						ImGui::ColorButton(label, color, ImGuiColorEditFlags_NoTooltip, ImVec2(20, 20));
 						ImGui::SameLine();
 						ImGui::Text("%s", label);
-						};
+					};
 
 					ColorLabel("100%+ (Clipping)", ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 					ColorLabel("95%-100% (Near Clip)", ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -1089,6 +1103,7 @@ int main(int argc, char* argv[]) {
 				}
 
 				ImGui::SeparatorText("Color Grade");
+
 				//contrast
 				if (ImGui::SliderFloat("Contrast", &my_post.contrast, 0.5f, 2.0f)) {
 					my_post.needs_update = true;
@@ -1159,6 +1174,7 @@ int main(int argc, char* argv[]) {
 						);
 					}
 				}
+
 				//sharpening
 				if (ImGui::CollapsingHeader("Sharpening")) {
 					if (ImGui::Checkbox("Enable Sharpen", &my_post.use_sharpening)) {
@@ -1177,6 +1193,7 @@ int main(int argc, char* argv[]) {
 				}
 				ImGui::EndTabItem();
 			}
+
 			//export to files tab
 			if (ImGui::BeginTabItem("Export")) {
 				ImGui::SeparatorText("Export Output");
@@ -1260,6 +1277,7 @@ int main(int argc, char* argv[]) {
 
 				ImGui::EndTabItem();
 			}
+
 			//stats and logs tab
 			if (ImGui::BeginTabItem("Stats & Logs")) {
 				engine_info.draw_tab_content(cam, is_rendering);
@@ -1300,8 +1318,7 @@ int main(int argc, char* argv[]) {
 						estimated_total - live_elapsed.count()
 					);
 				}
-			}
-			else if (last_render_duration > 0.0f) {
+			} else if (last_render_duration > 0.0f) {
 				if (render_was_cancelled) {
 					if (last_logged_percent != -2) {
 						engine_info.add_log("[Render] Cancelled by user at %.1f%%.", last_progress_percent);
@@ -1517,6 +1534,7 @@ int main(int argc, char* argv[]) {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(window);
 	}
+
 	//cleaunp section
 	//
 	//stop render and wait for thread 

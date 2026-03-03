@@ -30,9 +30,8 @@ public:
 			color exposed_c = render_accumulator[i] * exposure;
 			float lum = static_cast<float>(exposed_c.luminance());
 
+			//only consider pixels above the threshold for bloom, this is a common optimization to avoid unnecessary blurring of dark areas
 			if (lum > threshold) {
-				// Zmieniony wzór: zachowujemy kolor, ale skalujemy go intensywnością
-				// Możesz też użyć prostego: bright_buffer[i] = exposed_c * intensity;
 				float factor = (lum - threshold) * intensity;
 				bright_buffer[i] = exposed_c * static_cast<double>(factor / std::max(lum, 0.0001f));
 			}

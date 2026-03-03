@@ -88,6 +88,7 @@ public:
 	solid_color(const color& albedo)
 		: albedo(albedo)
 	{}
+
 	solid_color(double red, double green, double blue)
 		: solid_color(color(red, green, blue))
 	{}

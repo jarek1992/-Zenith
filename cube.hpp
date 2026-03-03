@@ -96,20 +96,6 @@ private:
 	point3 min_p;
 	point3 max_p;
 
-	////function to determine normal vector in intersection
-	//vec3 compute_normal(const point3& p) const {
-	//	const double EPS = 1e-3;
-
-	//	if (std::fabs(p.x() + half_extents.x()) < EPS) return vec3(-1, 0, 0); //mix_x (back face)
-	//	if (std::fabs(p.x() - half_extents.x()) < EPS) return vec3(1, 0, 0); //max_x (front face)
-
-	//	if (std::fabs(p.y() + half_extents.y()) < EPS) return vec3(0, -1, 0); //min_y (bottom face)
-	//	if (std::fabs(p.y() - half_extents.y()) < EPS) return vec3(0, 1, 0); //max_y (top face)
-
-	//	if (std::fabs(p.z() + half_extents.z()) < EPS) return vec3(0, 0, -1); //min_z (left face)
-	//	return vec3(0, 0, 1);
-	//}
-
 	//function to set hit record data (normal, UV coordinates, tangent, bitangent)
 	void set_cube_hit_data(const vec3& p, hit_record& rec) const {
 		const double EPS = 1e-3;

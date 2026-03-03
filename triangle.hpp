@@ -5,13 +5,13 @@
 class triangle : public hittable {
 public:
 	triangle(const point3& a, const point3& b, const point3& c, const vec3& _n0, const vec3& _n1, const vec3& _n2, shared_ptr<material>m)
-		: v0(a)
-		, v1(b)
-		, v2(c)
-		, n0(_n0)
-		, n1(_n1)
-		, n2(_n2)
-		, mat_ptr(m)
+		: v0(a) //first vertex of the triangle
+		, v1(b) //second vertex of the triangle
+		, v2(c) //third vertex of the triangle
+		, n0(_n0) //normal at vertex v0
+		, n1(_n1) //normal at vertex v1
+		, n2(_n2) //normal at vertex v2
+		, mat_ptr(m) //material pointer for the triangle
 	{}
 
 	virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const {
@@ -23,8 +23,9 @@ public:
 		double normal_length = normal.length();
 
 		if (normal_length < 1e-8) {
-			return false; // Degenerate triangle
+			return false; //degenerate triangle
 		}
+
 		vec3 unit_normal = normal / normal_length;
 
 		//check if cut the plane
@@ -40,11 +41,12 @@ public:
 		if (!ray_t.contains(t)) {
 			return false;
 		}
+
 		//find the intersection point and check if it's inside the triangle
 		point3 p = r.at(t);
 
 		//point p tests with respect to edges(outside-in test)
-		//checking if P-point is located on the internal vector side for each edge
+		//checking if p-point is located on the internal vector side for each edge
 
 		//calculate vectors for edges
 		vec3 edge_v0v1 = v1 - v0;

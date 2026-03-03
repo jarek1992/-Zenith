@@ -32,15 +32,11 @@ public:
 	}
 
 	const interval& axis(int n) const {
-		if (n == 1)
-		{
+		if (n == 1) {
 			return y;
-		}
-		else if (n == 2)
-		{
+		} else if (n == 2) {
 			return z;
-		}
-		else {
+		} else {
 			return x;
 		}
 	}

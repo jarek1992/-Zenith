@@ -65,7 +65,7 @@ public:
 
 	bool needs_update = true;
 
-	//hisogram datas for Imgui plot 
+	//histogram datas for Imgui plot 
 	mutable image_statistics last_stats;
 
 	//post-denoise sharpening
@@ -93,23 +93,26 @@ public:
 			c.x() * color_balance.x(),
 			c.y() * color_balance.y(),
 			c.z() * color_balance.z());
+
 		//2. contrast (0-1 range)
 		if (std::abs(contrast - 1.0f) > 0.001f) {
 			c = apply_contrast(c, contrast);
 		}
+
 		//3. vignette effect
 		if (vignette_intensity > 0.0f) {
 			float dist = std::sqrt((u - 0.5f) * (u - 0.5f) + (v - 0.5f) * (v - 0.5f));
 			float vig = std::clamp(1.0f - dist * vignette_intensity, 0.0f, 1.0f);
 			c *= static_cast<double>(vig);
 		}
+
 		//4. HSV operations
 		if (std::abs(saturation - 1.0f) > 0.001f || std::abs(hue_shift) > 0.001f) {
 			double original_luma = c.luminance();
 
-			// Jeśli piksel jest czarniejszy niż czarny, pomiń
+			//if pixel is darker than black, skip
 			if (original_luma > 0.0001) {
-				// Normalizujemy kolor do zakresu 0-1 tylko na potrzeby konwersji HSV
+				//normalize to 0-1 range for HSV conversion, but keep original HDR luma for final output
 				color normalized_rgb = c / original_luma;
 
 				vec3 hsv = rgb_to_hsv(normalized_rgb);
@@ -120,12 +123,12 @@ public:
 
 				color rgb_shifted = hsv_to_rgb(hsv);
 
-				// Przywracamy oryginalną jasność HDR do nowego koloru
+				//restore original HDR luma to new color
 				c = rgb_shifted * original_luma;
 			}
 		}
 
-		//5. tone mapping apply_aces (0-1 range)
+		//5. aces tone mapping apply_aces(0-1 range)
 		if (use_aces_tone_mapping) {
 			c = apply_aces(c);
 		}
@@ -189,8 +192,8 @@ public:
 		}
 
 		double current_exp;
-		// Jeśli obraz jest prawie czarny, używamy bardzo małej luminancji, 
-		// żeby nie dzielić przez zero, ale wciąż stosujemy kompensację!
+		//if the image is almost black, use a very small luminance to 
+		//avoid division by zero, but still apply compensation
 		double safe_luminance = std::max(static_cast<double>(stats.average_luminance), 0.02);
 
 		double raw_exposure = target_luminance / safe_luminance;
@@ -210,11 +213,6 @@ public:
 			for (size_t x = 1; x < static_cast<size_t>(width) - 1; ++x) {
 				size_t idx = y * width + x;
 
-				//simple sharpenning filter (Laplacian kernel)
-				//[ 0 -1  0]
-				//[-1  5 -1]
-				//[ 0 -1  0]
-
 				color sum = original[idx] * 5.0;
 				sum -= original[(y - 1) * width + x];
 				sum -= original[(y + 1) * width + x];
@@ -229,9 +227,7 @@ public:
 
 private:
 	color apply_contrast(color c, float contrast) const {
-
-		// Standardowy wzór na kontrast w przestrzeni liniowej
-		// 0.18 to "middle gray" - punkt, wokół którego skalujemy
+		//standard suggests 0.18 "middle gray" as a pivot for contrast adjustments in linear space
 		double pivot = 0.18;
 		return color(
 			std::max(0.0, (c.x() - pivot) * contrast + pivot),
@@ -288,17 +284,15 @@ private:
 
 		s = max < 1e-6f ? 0.0f : d / max;
 
+		//if max and min are the same, it's a shade of gray, so hue is undefined (set to 0)
 		if (max == min) {
 			h = 0.0f;
-		}
-		else {
+		} else {
 			if (max == r) {
 				h = (g - b) / d + (g < b ? 6.0f : 0.0f);
-			}
-			else if (max == g) {
+			} else if (max == g) {
 				h = (b - r) / d + 2.0f;
-			}
-			else if (max == b) {
+			} else if (max == b) {
 				h = (r - g) / d + 4.0f;
 			}
 			h /= 6.0f;
@@ -318,27 +312,27 @@ private:
 		float t = v * (1.0f - (1.0f - f) * s);
 
 		switch (i % 6) {
-		case 0: {
-			return vec3(v, t, p);
-		}
-		case 1: {
-			return vec3(q, v, p);
-		}
-		case 2: {
-			return vec3(p, v, t);
-		}
-		case 3: {
-			return vec3(p, q, v);
-		}
-		case 4: {
-			return vec3(t, p, v);
-		}
-		case 5: {
-			return vec3(v, p, q);
-		}
-		default: {
-			return vec3(0.0f, 0.0f, 0.0f);
-		}
+			case 0: {
+				return vec3(v, t, p);
+			}
+			case 1: {
+				return vec3(q, v, p);
+			}
+			case 2: {
+				return vec3(p, v, t);
+			}
+			case 3: {
+				return vec3(p, q, v);
+			}
+			case 4: {
+				return vec3(t, p, v);
+			}
+			case 5: {
+				return vec3(v, p, q);
+			}
+			default: {
+				return vec3(0.0f, 0.0f, 0.0f);
+			}
 		}
 	};
 };
