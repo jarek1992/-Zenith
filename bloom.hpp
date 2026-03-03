@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <vector>
-#include "rtweekend.hpp"
+#include "common.hpp"
 
 class bloom_filter {
 public:

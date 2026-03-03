@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rtweekend.hpp"
+#include "common.hpp"
 #include "color_processing.hpp"
 
 #include <vector>

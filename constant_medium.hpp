@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rtweekend.hpp"
+#include "common.hpp"
 #include "hittable.hpp"
 #include "material.hpp"
 #include "texture.hpp"

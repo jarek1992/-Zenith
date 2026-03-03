@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "vec3.hpp"
-#include "rtweekend.hpp"
+#include "common.hpp"
 
 #include <algorithm>
 #include <cmath>

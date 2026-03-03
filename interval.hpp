@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rtweekend.hpp"
+#include "common.hpp"
 
 #include <limits>
 #include <algorithm> // for std::fmin and std::fmax

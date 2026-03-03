@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "rtweekend.hpp"
+#include "common.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
 

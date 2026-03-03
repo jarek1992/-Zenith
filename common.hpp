@@ -116,8 +116,6 @@ enum class render_pass : int {
 	Z_DEPTH
 };
 
-
-
 #include "color.hpp"
 #include "interval.hpp"
 #include "ray.hpp"

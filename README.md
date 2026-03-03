@@ -364,7 +364,7 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     ./build/zenith_path_tracer
   </ul>
 
-<b><i>Note on Image Quality:</b> The engine features a built-in <b>ACES Tone Mapping</b> curve (see <code>rtweekend.hpp</code>) and <b>Auto-Exposure</b> logic. When running in <code>debug_mode::RED</code> or <code>GREEN</code>, you can observe the raw output of specific channels, while the main render utilizes Intel's AI Denoising for a noise-free experience.</i>
+<b><i>Note on Image Quality:</b> The engine features a built-in <b>ACES Tone Mapping</b> curve (see <code>common.hpp</code>) and <b>Auto-Exposure</b> logic. When running in <code>debug_mode::RED</code> or <code>GREEN</code>, you can observe the raw output of specific channels, while the main render utilizes Intel's AI Denoising for a noise-free experience.</i>
   
   </details>
 </ul>

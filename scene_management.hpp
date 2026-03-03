@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 //basic types and material library
-#include "rtweekend.hpp"
+#include "common.hpp"
 #include "material_library.hpp"
 
 //geometry (shapes)
