@@ -18,14 +18,12 @@ public:
 		//for safety , in case new_material is nullptr
 		if (new_material != nullptr) {
 			rec.mat = new_material;
-		}
-		else {
+		} else {
 
 			//if material is missing, assign a bright error material
 			static auto error_mat = make_shared<lambertian>(color(1, 0, 1));
 			rec.mat = error_mat;
 		}
-
 		return true;
 	}
 

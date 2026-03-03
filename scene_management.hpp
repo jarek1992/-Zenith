@@ -37,7 +37,6 @@ struct sceneAssetsLoader {
 
 //loading materials
 void load_materials(MaterialLibrary& mat_lib) {
-
 	//bump map textures
 	auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
 	auto scratches_bump = make_shared<image_texture>("assets/bump_maps/scratches_bump_map.jpg");
