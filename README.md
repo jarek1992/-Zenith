@@ -131,12 +131,12 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     <br>
     <ul>
         
-| **Material** | **Physical Property** | **Key Features** | **Textures(Albedo)** | **Bump** |
+| **Material** | **Physical Property** | **Key Features** | **Textures(Albedo)** | **Bump Map** |
 | :--- | :--- | :--- | :--- | :--- |
-| Lambertian | *Ideal Diffuse* | *Simulates matte surfaces with perfect light scattering.<br><b>Supported(Albedo Maps)</b>* | *✅ YES* | *✅ YES* |
-| Metal | *Specular Reflection* | *Includes a <b>Fuzz</b> parameter to control surface roughness/blurriness of reflections.<br><b>Supported (Fuzz/Color Maps)</b>* | *✅ YES* | *✅ YES* |
-| Dielectric | *Refraction* | *Handles transparent materials like glass or water with <b>IOR</b> (Index of Refraction) and Total Internal Reflection.<br><b>Procedural Tinting</b>* | *✅ Color* | *✅ YES* |
-| Emissive | *Light Emission* | *Turns any geometry into a physical light source (<b>Area Light</b>) with adjustable radiance.<br><b>Supported (Light Maps)</b>* | *✅ Color/Power* | *❌ NO* |
+| Lambertian | *Ideal Diffuse* | *Simulates matte surfaces with perfect light scattering.* | *✅ Yes* | *✅ Yes* |
+| Metal | *Specular Reflection* | *Includes a <b>Fuzz</b> parameter to control surface roughness/blurriness of reflections.* | *✅ Yes* | *✅ Yes* |
+| Dielectric | *Refraction* | *Handles transparent materials like glass or water with <b>IOR</b> (Index of Refraction) and Total Internal Reflection.* | *✅ Color* | *✅ Yes* |
+| Emissive | *Light Emission* | *Turns any geometry into a physical light source (<b>Area Light</b>) with adjustable radiance.* | *✅ Color/Power* | *❌ No* |
 
 <p><code>IMAGE: kule obok siebie z roznymi materialami - diffused lambertian, bumped metal, glass(dielectric), emissive.</code></p>
 
@@ -186,7 +186,6 @@ A high-performance, physically-based path tracing engine built with C++20. This 
   <details>
     <summary><b></b>Assets Loader</b></summary>
     <p>A dedicated struct <code>sceneAssetsLoader</code> for pre-loading heavy <code>.obj</code> models (like the included <code>teapot.obj</code> or <code>bowl.obj</code>) into memory once and stored as shared pointers to optimize RAM usage. Models can be placed <code>/assets/models/</code></p>
-    <ul>
       
     struct sceneAssetsLoader {
         shared_ptr<model> teapot;
@@ -196,7 +195,6 @@ A high-performance, physically-based path tracing engine built with C++20. This 
 		    //add more .obj models here...
 	    }
     };
-  </ul>
   </details>
 </ul>
 
