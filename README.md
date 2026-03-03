@@ -131,12 +131,12 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     <br>
     <ul>
         
-| **Material** | **Physical Property** | **Key Features** |
-| :--- | :--- | :--- |
-| Lambertian | *Ideal Diffuse* | *Simulates matte surfaces with perfect light scattering.<br><b>Supported(Albedo Maps)</b>* |
-| Metal | *Specular Reflection* | *Includes a <b>Fuzz</b> parameter to control surface roughness/blurriness of reflections.<br><b>Supported (Fuzz/Color Maps)</b>* |
-| Dielectric | *Refraction* | *Handles transparent materials like glass or water with <b>IOR</b> (Index of Refraction) and Total Internal Reflection.<br><b>Procedural Tinting</b>* |
-| Emissive | *Light Emission* | *Turns any geometry into a physical light source (<b>Area Light</b>) with adjustable radiance.<br><b>Supported (Light Maps)</b>* |
+| **Material** | **Physical Property** | **Key Features** | **Textures(Albedo)** | **Bump** |
+| :--- | :--- | :--- | :--- | :--- |
+| Lambertian | *Ideal Diffuse* | *Simulates matte surfaces with perfect light scattering.<br><b>Supported(Albedo Maps)</b>* | *✅ YES* | *✅ YES* |
+| Metal | *Specular Reflection* | *Includes a <b>Fuzz</b> parameter to control surface roughness/blurriness of reflections.<br><b>Supported (Fuzz/Color Maps)</b>* | *✅ YES* | *✅ YES* |
+| Dielectric | *Refraction* | *Handles transparent materials like glass or water with <b>IOR</b> (Index of Refraction) and Total Internal Reflection.<br><b>Procedural Tinting</b>* | *✅ Color* | *✅ YES* |
+| Emissive | *Light Emission* | *Turns any geometry into a physical light source (<b>Area Light</b>) with adjustable radiance.<br><b>Supported (Light Maps)</b>* | *✅ Color/Power* | *❌ NO* |
 
 <p><code>IMAGE: kule obok siebie z roznymi materialami - diffused lambertian, bumped metal, glass(dielectric), emissive.</code></p>
 
@@ -178,10 +178,6 @@ A high-performance, physically-based path tracing engine built with C++20. This 
   </details>
 </ul>
 
-
-
-
-
 ### 🎬 Scene Configuration & Workflow
 <ul>
   The entire scene configuration is centralized in <code>scene_management.hpp</code>. You don't need to recompile the core engine to swap assets or materials.
@@ -214,12 +210,12 @@ A high-performance, physically-based path tracing engine built with C++20. This 
       
     void load_materials(MaterialLibrary& mat_lib) {
         //bump map textures
-	      auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
+	    auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
         //... more bump maps as needed
 
         //add some predefined materials to the library
         mat_lib.add("wood_bumpy_texture", 
-            make_shared<lambertian>(make_shared<image_texture>("assets/textures/fine-wood.jpg"), wood_bump, 2.0));
+        make_shared<lambertian>(make_shared<image_texture>("assets/textures/fine-wood.jpg"), wood_bump, 2.0));
         //... add more materials as needed 
     }
   <i>Note: Currently, Bump Mapping is not supported for <code>.obj</code> triangle meshes; this is planned for a future update.</i>
@@ -257,18 +253,15 @@ A high-performance, physically-based path tracing engine built with C++20. This 
 
     // - 5. environmental fog
     if (use_fog) {
-		    //set radius and center of the fog volume (can be adjusted to fit the scene better)
-		    auto fog_boundary = make_shared<sphere>(point3(0.0, 0.0, 0.0), 50.0, nullptr);
-		    //fog density 0.1 is extremely high (impenetrable wall). 
-		    //values 0.001 - 0.02 gives best visual results.
-		    world.add(make_shared<constant_medium>(fog_boundary, fog_density, fog_color));
-	  }
+		//set radius and center of the fog volume (can be adjusted to fit the scene better)
+		auto fog_boundary = make_shared<sphere>(point3(0.0, 0.0, 0.0), 50.0, nullptr);
+		//fog density 0.1 is extremely high (impenetrable wall). 
+		//values 0.001 - 0.02 gives best visual results.
+		world.add(make_shared<constant_medium>(fog_boundary, fog_density, fog_color));
+	}
 </ul>
   </details>
 </ul>
-
-
-
 
 ### 🕹 Interactive UI Overview 
 <ul>
