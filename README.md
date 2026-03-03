@@ -195,10 +195,10 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     struct sceneAssetsLoader {
         shared_ptr<model> teapot;
 
-	      sceneAssetsLoader() {
-		      teapot = make_shared<model>("assets/models/teapot.obj", nullptr, 0.4);
-		      //add more .obj models here...
-	      }
+	    sceneAssetsLoader() {
+		    teapot = make_shared<model>("assets/models/teapot.obj", nullptr, 0.4);
+		    //add more .obj models here...
+	    }
     };
   </ul>
   </details>
@@ -250,9 +250,9 @@ A high-performance, physically-based path tracing engine built with C++20. This 
       <li><b>Transformations:</b> Easily wrap objects in <code>translate, rotate_x/y/z</code>, and <code>scale</code> instances.</li>
       
     //cube
-	  auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);
-	  auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("foggy_glass"));
-	  world.add(make_shared<translate>(big_cube_instance, point3(0.0, 1.0, 2.5)));
+	auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);
+	auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("foggy_glass"));
+	world.add(make_shared<translate>(big_cube_instance, point3(0.0, 1.0, 2.5)));
 <li><b>Volumetric Fog:</b> Enable global environmental fog by setting <code>use_fog</code> to true and adjusting <code>fog_density</code> and <code>fog_color</code>.</li>
 
     // - 5. environmental fog
