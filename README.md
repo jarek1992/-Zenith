@@ -41,26 +41,26 @@ inline color apply_aces(color x) {
   ```cpp
   #pragma omp parallel for schedule(dynamic)
   for (int j = 0; j < image_height; ++j) {
-  	// Pixel processing logic...
+  	//pixel processing logic...
   }
 ```
   <li><b>Data Structures:</b> <b>BVH(Bounding Volume Hierarchy)</b> – optimizes ray-object intersection tests from <i>O(N)</i> to <i>O(logN)</i>.</li>
   <ul>
     <br>
-    <code> IMAGE: Left: A complex mesh partitioned into AABBs (Axis-Aligned Bounding Boxes). Right: The resulting tree structure used for O(logN) traversal.</code>
+    <i>Spatial bounding volume hierarchy (BVH) reduces the complexity of collision tests from <b>O(N)</b> to <b>O(log N)</b> through recursive division of the scene into containers AABB.</i>
   </ul>
   <br>
   <li>
     <b>Memory Management:</b> Dirty Flag System (<code>needs_update</code>, <code>needs_ui_sync</code>) – intelligent buffer reloading triggered only upon parameter changes.
 
 ```cpp
-//Example of smart state synchronization
+//example of smart state synchronization
 if (ImGui::SliderFloat("Aperture", &cam.aperture, 0.0f, 0.5f)) {
-	my_post.needs_update = true; // Trigger post-process recalculation
+	my_post.needs_update = true; //trigger post-process recalculation
 }
       
 if (ImGui::IsItemDeactivatedAfterEdit()) {
-	reset_accumulator(); // Only reset samples when user finishes interaction
+	reset_accumulator(); //only reset samples when user finishes interaction
 }
 ```  
   </li>
@@ -82,7 +82,7 @@ if (ImGui::IsItemDeactivatedAfterEdit()) {
 | Interactive Navigation | *Smooth 3D space movement and orientation* | *LookAt, LookFrom, Up Vector* |
 | Anti-aliasing(AA) | *<b>Sub-pixel jittering</b> eliminates jagged edges by slightly <br>offsetting rays within each pixel footprint, <br>resulting in smooth, film-like edges* | *Stratified Sampling (per pixel)* |
 
-<p><code>IMAGE: Ray-Material Interaction: Demonstrating how surface roughness (Fuzz) affects the scattering of light rays, resulting in sharp reflections or soft, "frosted" appearances.</code></p>
+<p><code>IMAGE: 3 images with different focus distances 3.0, 9.0, and 18.0.</code></p>
 
   </ul>
   </details>
