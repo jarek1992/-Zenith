@@ -19,27 +19,31 @@ A high-performance, physically-based path tracing engine built with C++20. This 
       <p><li><b>Language:</b> <b>C++20</b> (utilizing modern standards: <code>std::clamp</code>, <code>std::shared_ptr</code>, and advanced lambdas).</li>
         <li><b>Rendering Model:</b> Progressive Path Tracing (real-time sample accumulation).</li>
         <li><b>Integration Method:</b> Monte Carlo (stochastic sampling of light paths).
-          
-    // ACES Tone Mapping to map HDR radiance to [0.0, 1.0] display range
-    inline color apply_aces(color x) {
-        const double a = 2.51;
-        const double b = 0.03;
-        const double c = 2.43;
-        const double d = 0.59;
-        const double e = 0.14;
-        return color(
-            std::clamp((x.x() * (a * x.x() + b)) / (x.x() * (c * x.x() + d) + e), 0.0, 1.0),
-            // ... applied to all channels
-        );
-    }
+	
+```cpp      
+//ACES Tone Mapping to map HDR radiance to [0.0, 1.0] display range
+inline color apply_aces(color x) {
+	const double a = 2.51;
+	const double b = 0.03;
+	const double c = 2.43;
+	const double d = 0.59;
+	const double e = 0.14;
+
+	return color(
+		std::clamp((x.x() * (a * x.x() + b)) / (x.x() * (c * x.x() + d) + e), 0.0, 1.0),
+		// ... applied to all channels
+	);
+}
+```		
   </li>
   <li><b>Hardware Acceleration(CPU):</b> <b>OpenMP</b> (parallelized computation across all available processor threads).</li>
-         
-      #pragma omp parallel for schedule(dynamic)
-      for (int j = 0; j < image_height; ++j) {
-          // Pixel processing logic...
-      }
-
+ 
+  ```cpp
+  #pragma omp parallel for schedule(dynamic)
+  for (int j = 0; j < image_height; ++j) {
+  	// Pixel processing logic...
+  }
+```
   <li><b>Data Structures:</b> <b>BVH(Bounding Volume Hierarchy)</b> – optimizes ray-object intersection tests from <i>O(N)</i> to <i>O(logN)</i>.</li>
   <ul>
     <br>
@@ -49,15 +53,16 @@ A high-performance, physically-based path tracing engine built with C++20. This 
   <li>
     <b>Memory Management:</b> Dirty Flag System (<code>needs_update</code>, <code>needs_ui_sync</code>) – intelligent buffer reloading triggered only upon parameter changes.
 
-      // Example of smart state synchronization
-      if (ImGui::SliderFloat("Aperture", &cam.aperture, 0.0f, 0.5f)) {
-          my_post.needs_update = true; // Trigger post-process recalculation
-      }
+```cpp
+//Example of smart state synchronization
+if (ImGui::SliderFloat("Aperture", &cam.aperture, 0.0f, 0.5f)) {
+	my_post.needs_update = true; // Trigger post-process recalculation
+}
       
-      if (ImGui::IsItemDeactivatedAfterEdit()) {
-          reset_accumulator(); // Only reset samples when user finishes interaction
-      }
-      
+if (ImGui::IsItemDeactivatedAfterEdit()) {
+	reset_accumulator(); // Only reset samples when user finishes interaction
+}
+```  
   </li>
 </ul>
     </ul>
@@ -186,15 +191,17 @@ A high-performance, physically-based path tracing engine built with C++20. This 
   <details>
     <summary><b></b>Assets Loader</b></summary>
     <p>A dedicated struct <code>sceneAssetsLoader</code> for pre-loading heavy <code>.obj</code> models (like the included <code>teapot.obj</code> or <code>bowl.obj</code>) into memory once and stored as shared pointers to optimize RAM usage. Models can be placed <code>/assets/models/</code></p>
-      
-    struct sceneAssetsLoader {
-        shared_ptr<model> teapot;
 
-	    sceneAssetsLoader() {
-		    teapot = make_shared<model>("assets/models/teapot.obj", nullptr, 0.4);
-		    //add more .obj models here...
-	    }
-    };
+```cpp
+struct sceneAssetsLoader {
+	shared_ptr<model> teapot;
+
+	sceneAssetsLoader() {
+		teapot = make_shared<model>("assets/models/teapot.obj", nullptr, 0.4);
+		//add more .obj models here...
+	}
+};
+```
   </details>
 </ul>
 
@@ -205,33 +212,37 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     <ul>
       <li><b>Centralized Registry:</b> Define all your materials once in a global library <code>(load_materials)</code>. It supports <b>lambertian</b>, <b>metal</b>, <b>dielectric(glass)</b>, and <b>emissive</b>.</li>
       <li><b>Texture & Bump Mapping:</b> Enhance surface detail using high-resolution texture and bump maps. Pass an <code>image_texture</code> to the material constructor to add tactile depth. Place your own textures directly into <code>/assets/textures/</code> and bump maps inside <code>/assets/bump_maps/</code></li>
-      
-    void load_materials(MaterialLibrary& mat_lib) {
-        //bump map textures
-	    auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
-        //... more bump maps as needed
 
-        //add some predefined materials to the library
-        mat_lib.add("wood_bumpy_texture", 
-        make_shared<lambertian>(make_shared<image_texture>("assets/textures/fine-wood.jpg"), wood_bump, 2.0));
-        //... add more materials as needed 
-    }
+```cpp	  
+void load_materials(MaterialLibrary& mat_lib) {
+	//bump map textures
+	auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
+	//... more bump maps as needed
+
+	//add some predefined materials to the library
+	mat_lib.add("wood_bumpy_texture", 
+	make_shared<lambertian>(make_shared<image_texture>("assets/textures/fine-wood.jpg"), wood_bump, 2.0));
+	//... add more materials as needed 
+}
+```
   <i>Note: Currently, Bump Mapping is not supported for <code>.obj</code> triangle meshes; this is planned for a future update.</i>
   <li><b>Zero-Copy Instancing:</b> Instead of duplicating heavy geometry, use a <code>material_instance</code> class to wrap a shared mesh with a specific material. This allows you to render hundreds of unique-looking objects while keeping only one copy of the mesh in RAM.</li>
-    
-    void load_materials(MaterialLibrary& mat_lib) {
-        auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
-    
-        //define a "bumpy" wood material in the library
-        mat_lib.add("wood_bumpy", make_shared<lambertian>(
-            make_shared<image_texture>("assets/textures/fine-wood.jpg"), 
-            wood_bump, 2.0));
-    }
 
-    //in build_geometry: Reuse the same sphere geometry with different materials
-    auto sphere_geom = make_shared<sphere>(point3(0,0,0), 1.0, nullptr);
-    world.add(make_shared<material_instance>(sphere_geom, mat_lib.get("wood_bumpy")));
-    world.add(make_shared<material_instance>(sphere_geom, mat_lib.get("gold_mat")));
+```cpp	
+void load_materials(MaterialLibrary& mat_lib) {
+	auto wood_bump = make_shared<image_texture>("assets/bump_maps/wood_bump_map.jpg");
+    
+	//define a "bumpy" wood material in the library
+	mat_lib.add("wood_bumpy", make_shared<lambertian>(
+	make_shared<image_texture>("assets/textures/fine-wood.jpg"), 
+	wood_bump, 2.0));
+}
+
+//in build_geometry: Reuse the same sphere geometry with different materials
+auto sphere_geom = make_shared<sphere>(point3(0,0,0), 1.0, nullptr);
+world.add(make_shared<material_instance>(sphere_geom, mat_lib.get("wood_bumpy")));
+world.add(make_shared<material_instance>(sphere_geom, mat_lib.get("gold_mat")));
+```
    </ul>
   </details>
 </ul>
@@ -242,21 +253,25 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     <p>Place a geometry inside <code>build_geometry()</code> to compose your world. Use <code>material_instance</code> to apply shared materials to different shapes.</p>
     <ul>
       <li><b>Transformations:</b> Easily wrap objects in <code>translate, rotate_x/y/z</code>, and <code>scale</code> instances.</li>
-      
-    //cube
-	auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);
-	auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("foggy_glass"));
-	world.add(make_shared<translate>(big_cube_instance, point3(0.0, 1.0, 2.5)));
+
+```cpp		  
+//cube
+auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);
+auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("foggy_glass"));
+world.add(make_shared<translate>(big_cube_instance, point3(0.0, 1.0, 2.5)));
+```
 <li><b>Volumetric Fog:</b> Enable global environmental fog by setting <code>use_fog</code> to true and adjusting <code>fog_density</code> and <code>fog_color</code>.</li>
 
-    // - 5. environmental fog
-    if (use_fog) {
-		//set radius and center of the fog volume (can be adjusted to fit the scene better)
-		auto fog_boundary = make_shared<sphere>(point3(0.0, 0.0, 0.0), 50.0, nullptr);
-		//fog density 0.1 is extremely high (impenetrable wall). 
-		//values 0.001 - 0.02 gives best visual results.
-		world.add(make_shared<constant_medium>(fog_boundary, fog_density, fog_color));
-	}
+```cpp	
+// - 5. environmental fog
+if (use_fog) {
+	//set radius and center of the fog volume (can be adjusted to fit the scene better)
+	auto fog_boundary = make_shared<sphere>(point3(0.0, 0.0, 0.0), 50.0, nullptr);
+	//fog density 0.1 is extremely high (impenetrable wall). 
+	//values 0.001 - 0.02 gives best visual results.
+	world.add(make_shared<constant_medium>(fog_boundary, fog_density, fog_color));
+}
+```
 </ul>
   </details>
 </ul>
@@ -372,9 +387,10 @@ A high-performance, physically-based path tracing engine built with C++20. This 
         <b>1. Clone the Repository</b>
         <p>Clone the project along with the vcpkg submodule: </p>
 
-    git clone --recursive https://github.com/jarek1992/-Zenith.git
-    cd .\-Zenith\ 
-  
+```cpp	
+git clone --recursive https://github.com/jarek1992/-Zenith.git
+cd .\-Zenith\ 
+```
   <p><i>Note: If you downloaded the repo without <code>--recursive</code>, run <code>git submodule update --init --recursive</code> inside the project folder to fetch vcpkg.</i></p>
   </p>
   </div>
@@ -425,15 +441,19 @@ A high-performance, physically-based path tracing engine built with C++20. This 
     <b>4. Configure & Install Dependencies:</b>
     <p>Run CMake to trigger <b>vcpkg</b> and configure the build system. This will automatically download and build <b>SDL3</b>, <b>ImGui</b>, and <b>Glad</b>.</p>
 
-    cmake -B build -S . "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake" 
+```cpp	
+cmake -B build -S . "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake"
+```
   </p>
   </div>
     <div style="margin-left: 20px;">
     <b>5. Build the Project:</b>
     <p>Compile the executable in Release mode for maximum performance:</p>
 
-    cmake --build build --config Release
-  </p>
+```cpp	
+cmake --build build --config Release
+```
+ </p>
    </div>
     <div style="margin-left: 20px;">
     <b>6. Run the Engine:</b><br>
@@ -579,13 +599,15 @@ A high-performance, physically-based path tracing engine built with C++20. This 
 
 - <b>Frame Profiler:</b> Engineered for maximum throughput. The engine utilizes all logical CPU cores via OpenMP, providing real-time progress tracking via atomic line counters for smooth UI updates.
 <ul>
-  
-    // Every 10 lines update progress bar for atomic safety
-    if (local_lines_done % 10 == 0 || j == end_y - 1) {
-        // fetch_add ensures thread-safe updates across all CPU cores
-        this->lines_rendered.fetch_add(local_lines_done);
-        local_lines_done = 0; // reset local thread counter
-    }
+
+  ```cpp	
+  // Every 10 lines update progress bar for atomic safety
+  if (local_lines_done % 10 == 0 || j == end_y - 1) {
+  	// fetch_add ensures thread-safe updates across all CPU cores
+  	this->lines_rendered.fetch_add(local_lines_done);
+  	local_lines_done = 0; // reset local thread counter
+  }
+```
 </ul>
 
 ### 🗺 Future Roadmap
