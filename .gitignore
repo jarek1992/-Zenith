@@ -40,7 +40,8 @@ libs/oidn/include/*
 !assets/**/*.hdr
 !assets/**/*.obj
 !media/
-!media/**/*
+!media/**/*.png
+!media/**/*.jpg
 
 # render outputs (ignore)
 *.ppm
