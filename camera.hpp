@@ -167,7 +167,7 @@ public:
 
 			//bloom
 			if (post.use_bloom) {
-				std::vector<color> bloom_overlay(final_framebuffer.size(), color(0, 0, 0));
+				std::vector<color> bloom_overlay(final_framebuffer.size(), color(0.0, 0.0, 0.0));
 				bloom_filter bloom(post.bloom_threshold, post.bloom_intensity, post.bloom_radius);
 				bloom.generate_bloom_overlay(final_framebuffer, bloom_overlay, w, h, 1.0f);
 				for (size_t i = 0; i < final_framebuffer.size(); ++i) final_framebuffer[i] += bloom_overlay[i];
@@ -195,8 +195,7 @@ public:
 				//for reflection/refraction only exposure + process
 				double ev_multiplier = std::pow(2.0, post.exposure);
 				final_framebuffer[idx] = post.process(c * ev_multiplier, u, v);
-			}
-			else {
+			} else {
 				//(albedo, normals, z-depth)
 				//clamp and gamma
 				c = color(std::clamp(c.x(), 0.0, 1.0),
@@ -746,9 +745,13 @@ private:
 			for (int i = 0; i < image_width; i++) {
 				//get raw color
 				size_t pixel_idx = static_cast<size_t>(j) * image_width + i;
-				color pix_color = buffer[pixel_idx];
+				color pix_color = bloom_buffer[pixel_idx];
 
 				if (!is_data_pass) {
+
+					//calculate exposure multiplier for the pixel like in GUI preview
+					pix_color *= ev_multiplier;
+
 					//calculate normalized u,v (0.0 - 1.0 range)
 					float u = static_cast<float>(i) / (image_width - 1);
 					float v = static_cast<float>(j) / (image_height - 1);
