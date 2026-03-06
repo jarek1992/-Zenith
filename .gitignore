@@ -26,29 +26,29 @@ vcpkg/
 *.pdb
 *.ilk
 
-# OIDN structure preservation
-libs/oidn/bin/*
-libs/oidn/lib/*
-libs/oidn/include/*
-
-!**/ .gitkeep
-
-# assets & textures
-!assets/
-!assets/**/*.png
-!assets/**/*.jpg
-!assets/**/*.hdr
-!assets/**/*.obj
-!media/
-!media/**/*.png
-!media/**/*.jpg
-
 # render outputs (ignore)
 *.ppm
 *.png
 *.jpg
 output/
 screenshots/
+
+# assets & textures
+!assets/
+!media/
+!assets/**/*.png
+!assets/**/*.jpg
+!assets/**/*.hdr
+!assets/**/*.obj
+!media/**/*.png
+!media/**/*.jpg
+
+# OIDN structure preservation
+libs/oidn/bin/*
+libs/oidn/lib/*
+libs/oidn/include/*
+
+!**/ .gitkeep
 
 # temporary/misc
 *.d
