@@ -64,6 +64,17 @@ public:
 		}
 		return true;
 	}
+
+	bool is_on_edge(const point3& p, double thickness) {
+		//check the distance from the point to each edge on each axis(x,y,z)
+		bool near_x_edge = std::abs(p.x() - x.min) < thickness || std::abs(p.x() - x.max) < thickness;
+		bool near_y_edge = std::abs(p.y() - y.min) < thickness || std::abs(p.y() - y.max) < thickness;
+		bool near_z_edge = std::abs(p.z() - z.min) < thickness || std::abs(p.z() - z.max) < thickness;
+
+		//the point is considered to be on the edge if it is near the edge on at least two axes
+		return (near_x_edge && near_y_edge) || (near_x_edge && near_z_edge) || (near_y_edge && near_z_edge);
+
+	}
 };
 
 //translate bounding box by offset vector
