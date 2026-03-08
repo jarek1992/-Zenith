@@ -293,8 +293,9 @@ if (use_fog) {
 | **Normal Pass** | *Surface orientation* | *Check for smoothing groups and geometry errors* |
 | **Z-Depth Pass** | *Spatial distance* | *Debug focus distance for the Depth of Field (DoF) system* |
 | **Luminance** | *Brightness map* | *Analyze the input for the Auto-Exposure algorithm* |
+| **BVH Mode** | *Spatial Hierarchy* | *Audit tree health and node culling directly from the UI.* |
 
-<p><code>IMAGE: obrazek z rgb/albedo/normals/z-depth/luminance</code></p>
+<p><code>IMAGE: obrazek z rgb/albedo/normals/z-depth/luminance/BVH Wireframe (Level 3 lub Leaves)</code></p>
   </ul>
   </details>
   </ul>
@@ -521,18 +522,26 @@ cmake --build build --config Release
   <ul style="list-style-type: none;">
   <details>
    <summary><b>Bounding Volume Hierarchy (BVH)</b></summary>
-    <p>Traditional ray tracing checks every ray against every object (<i>O(N)</i> complexity) which is unsustainable for complex scenes.</p>
+    <p>Traditional ray tracing checks every ray against every object (<i>O(N)</i> complexity) which is unsustainable for complex scenes with high primitive counts.</p>
     <ul>
-      <li><b>Recursive Tree Partitioning:</b> The engine implements a high-performance BVH that groups objects into a nested hierarchy of bounding boxes.</li>
       <li><b>Logarithmic Scaling:</b> By using an <i>O(logN)</i> traversal algorithm, the engine can handle scenes with thousands of primitives while maintaining high frame rates.</li>
-      <li><b>Intersection Culling:</b> Rays that do not intersect a parent node's bounding box are immediately discarded, drastically reducing the number of expensive ray-sphere or ray-triangle tests.</li>
+      <li><b>Intersection Culling:</b> Rays that do not intersect a parent node's bounding box are immediately discarded, skipping all child nodes and primitives within.</li>
+	  <li><b>Balanced Tree Construction:</b> Objects are sorted along the longest axis to ensure a balanced hierarchy, minimizing box overlap and maximizing traversal efficiency.</li>
+     </ul><br>
+	  <b>Integrated BVH Diagnostic Suite</b>
+	  <p>The engine features a custom real-time visualizer to audit the health of the BVH tree directly from the <b>Engine Control Panel</b>.</p>
+   <ul>
       
-      IMAGE: Schemat (diagram) pokazujący, jak duży sześcian (AABB) dzieli się na mniejsze, otaczające sfery. 
-      To natychmiast wyjaśnia, dlaczego nie sprawdza,y każdej sfery z osobna.
-      Prosty rysunek techniczny "Bounding Boxes hierarchy".
-  </ul>
-  </details>
-  </ul>
+| **Feature** | **Description** |
+| :--- | :--- |
+| **BVH-Mode Toggle** | *Activates neon wireframe rendering for the active BVH layer* |
+| **Level Sliders** | *Scans the hierarchy depth-by-depth to verify spatial partitioning.* | 
+| **Leaf Isolation** | *Special mode (<code>Level: -1</code>) that highlights only the final leaf nodes<br> wrapping individual primitives.* |
+
+    IMAGE: Obrazki z wlaczonymi roznymi levelami boxów.      
+</ul>
+</details>
+</ul>
 
   <ul style="list-style-type: none;">
   <details>
