@@ -71,13 +71,7 @@ void load_materials(MaterialLibrary& mat_lib) {
 	mat_lib.add("scratched_mirror", make_shared<metal>(color(1.0, 1.0, 1.0), 0.0, scratches_bump, 1.0));
 	mat_lib.add("brushed_aluminium", make_shared<metal>(color(1.0, 1.0, 1.0), 0.25));
 	mat_lib.add("black_diffuse", make_shared<lambertian>(color(0.05, 0.05, 0.05)));
-
-	mat_lib.add("metal_colored1", make_shared<metal>(color(random_double(0, 1), random_double(0, 1), random_double(0, 1)), 0.53));
-	mat_lib.add("metal_colored2", make_shared<metal>(color(random_double(0, 1), random_double(0, 1), random_double(0, 1)), 0.05));
-	mat_lib.add("metal_colored3", make_shared<metal>(color(random_double(0, 1), random_double(0, 1), random_double(0, 1)), 0.15));
-	mat_lib.add("metal_colored4", make_shared<metal>(color(random_double(0, 1), random_double(0,1), random_double(0, 1)), 0.75));
-
-	mat_lib.add("white_metal", make_shared<metal>(color(1.0, 1.0, 1.0), 0.99));
+	mat_lib.add("white_metal", make_shared<metal>(color(1.0, 1.0, 1.0), 0.7));
 	mat_lib.add("white_metal_bump", make_shared<metal>(color(0.9, 0.9, 0.9), 0.6, concrete_bump, 2.0));
 	mat_lib.add("checker_texture", make_shared<lambertian>(make_shared<checker_texture>(0.5, color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9))));
 	mat_lib.add("glass_bubble", make_shared<dielectric>(1.0 / 1.5));
@@ -92,12 +86,16 @@ void load_materials(MaterialLibrary& mat_lib) {
 	mat_lib.add("neon_yellow", make_shared<diffuse_light>(color(1.0, 0.8, 0.0) * 6.0));
 	mat_lib.add("neon_white", make_shared<diffuse_light>(color(1.0, 1.0, 1.0) * 6.0));
 	mat_lib.add("neon_red", make_shared<diffuse_light>(color(1.0, 0.1, 0.1) * 6.0));
-	mat_lib.add("ceiling_emissive", make_shared<diffuse_light>(color(1.0, 0.0, 0.5) * 10.0));
+	mat_lib.add("ceiling_emissive", make_shared<diffuse_light>(color(1.0, 0.0, 0.5) * 5.0));
 	//... add more materials as needed
 
-	//floor checker material 
+	//floor checker material reflective
 	auto checker = make_shared<checker_texture>(0.5, color(0.1, 0.1, 0.1), color(0.9, 0.9, 0.9));
 	mat_lib.add("reflective_checker_mat", make_shared<metal>(checker, 0.02));
+
+	//floor checker material
+	auto checker1 = make_shared<checker_texture>(0.5, color(0.1, 0.1, 0.1), color(0.9, 0.9, 0.9));
+	mat_lib.add("checker_mat", make_shared<metal>(checker1, 0.95));
 }
 
 //build scene geometry
@@ -107,35 +105,128 @@ hittable_list build_geometry(MaterialLibrary& mat_lib, const sceneAssetsLoader& 
 
 	// - 1. FLOOR -
 	auto ground_geom = make_shared<sphere>(point3(0.0, -1000.0, 0.0), 1000.0, nullptr);
-	world.add(make_shared<material_instance>(ground_geom, mat_lib.get("white_diffuse")));
+	world.add(make_shared<material_instance>(ground_geom, mat_lib.get("checker_mat")));
 
-	// 2. DIAGNOSTYCZNA LINIA (Wymusza podziały wzdłuż osi)
-	// Tworzymy 8 sfer ułożonych tak, by każda była w innym "narożniku" wirtualnego sześcianu
-	for (int i = 0; i < 8; i++) {
-		// Rozmieszczenie binarne: (0,0,0), (0,0,1), (0,1,0)... aż do (1,1,1)
-		float x = (i & 1) ? 4.0f : -4.0f;
-		float y = (i & 2) ? 4.0f : 0.5f;
-		float z = (i & 4) ? -10.0f : -18.0f;
+	//cube
+	auto big_cube_geom = make_shared<cube>(point3(-5.0, -5.0, -5.0), point3(5.0, 5.0, 5.0), nullptr);
+	auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("white_diffuse"));
+	auto big_cube_scaled = make_shared<scale>(big_cube_instance, vec3(1.0, 1.0, 1.0));
+	world.add(make_shared<translate>(big_cube_scaled, point3(0.0, 1.0, 2.5)));
 
-		point3 pos(x, y, z);
-		auto s_geom = make_shared<sphere>(pos, 0.5, nullptr);
+	// - 4. LIGHT PLANE 
+	auto light_geom = make_shared<cube>(point3(-3.0, -0.05, -3.0), point3(3.0, 0.05, 3.0), nullptr);
+	auto light_instance = make_shared<material_instance>(light_geom, mat_lib.get("ceiling_emissive"));
+	world.add(make_shared<translate>(light_instance, point3(2.0, 5.0, 2.5)));
 
-		// Używamy matowego czarnego, by neonowe ramki "płonęły" na krawędziach
-		world.add(make_shared<material_instance>(s_geom, mat_lib.get("white_diffuse")));
-	}
+	auto torus_knot_instance = make_shared<material_instance>(assets.torus_knot, mat_lib.get("white_metal"));
+	auto torus_knot_scale = make_shared<scale>(torus_knot_instance, vec3(0.6, 0.6, 0.6));
+	auto torus_knot_final = make_shared<translate>(torus_knot_scale, point3(2.0, 0.0, 2.5));
+	world.add(torus_knot_final);
 
-	// 3. "WIEŻA" (Test podziałów pionowych - oś Y)
-	for (int i = 0; i < 5; i++) {
-		point3 pos(0, 1.0f + i * 2.0f, -14.0f);
-		auto s_geom = make_shared<sphere>(pos, 0.4, nullptr);
-		world.add(make_shared<material_instance>(s_geom, mat_lib.get("white_diffuse")));
-	}
+	//int num_sphere = 64;
+	//for (int i = 0; i < num_sphere; i++) {
+	//	float fraction = static_cast<float>(i) / num_sphere;
 
+	//	float y_offset = 7.0f; 
 
-	//// - 4. LIGHT PLANE 
-	///*auto light_geom = make_shared<cube>(point3(-0.2, -0.2, -0.2), point3(0.2, 0.2, 0.2), nullptr);
-	//auto light_instance = make_shared<material_instance>(light_geom, mat_lib.get("ceiling_emissive"));
-	//world.add(make_shared<translate>(light_instance, point3(0.0, 15.0, 0.0)));*/
+	//	float radius = 5.0f * fraction;
+	//	float angle = i * 8.0f;
+	//	float height = (fraction * 10.0f - 5.0f) + y_offset;
+
+	//	float x = radius * cos(angle);
+	//	float y = height;
+	//	float z = -14.0f + radius * sin(angle);
+	//	
+	//	auto sphere_1 = make_shared<sphere>(point3(x, y, z), 0.3, nullptr);
+	//	auto sphere_inst = make_shared<material_instance>(sphere_1, mat_lib.get("white_diffuse"));
+	//	world.add(sphere_inst);
+	//}
+
+	//// - 2. FREE STANDING GEOMETRIES (in the middle)
+	////
+	////teapot (loaded object .obj from the file)
+	//auto teapot_inst = make_shared<material_instance>(assets.teapot, mat_lib.get("glass"));
+	//auto rot_teapot_x = make_shared<rotate_x>(teapot_inst, -90.0);
+	//auto rot_teapot_y = make_shared<rotate_y>(rot_teapot_x, 30.0);
+	//auto teapot_final = make_shared<translate>(rot_teapot_y, point3(0.0, 1.0, -2.5));
+	//world.add(teapot_final);
+
+	////cube
+	//auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);
+	//auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("foggy_glass"));
+	//world.add(make_shared<translate>(big_cube_instance, point3(0.0, 1.0, 2.5)));
+
+	//// - 3. RANDOM SPREADED GEOMETRIES
+	////
+	////master geometries (local prefabicats)
+	//auto master_cube = make_shared<cube>(point3(-0.2, -0.2, -0.2), point3(0.2, 0.2, 0.2), nullptr);
+	//auto master_sphere = make_shared<sphere>(point3(0.0, 0.0, 0.0), 0.2, nullptr);
+	////material filters
+	//auto neon_mats = mat_lib.get_emissive_names();
+	//auto regular_mats = mat_lib.get_regular_names();
+	////for loop to randomize location of small cubes and spheres*/
+	//for (int a = -30; a < 30; a++) {
+	//	for (int b = -30; b < 30; b++) { //create the grid a(-15, 15) / b(-15, 15)
+	//		point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double()); //point3(x,(y = const),z)
+
+	//		if ((center - point3(4.0, 0.2, 0.0)).length() > 0.9) {
+	//			std::string selected_mat_name;
+	//			shared_ptr<hittable> geometry;
+	//			//scale
+	//			vec3 scale_v(1.0, 1.0, 1.0); //default scale
+	//			//select random number 0.0 - 1.0
+	//			double dice_roll = random_double();
+
+	//			//1. Probability distribution
+	//			if (dice_roll < 0.25) {
+	//				//25% chance to draw neon material
+	//				/*int max_idx = static_cast<int>(neon_mats.size()) - 1;*/
+	//				/*int idx = random_int(0, static_cast<int>(regular_mats.size()) - 1);*/
+	//				selected_mat_name = "white_diffuse";
+
+	//				/*selected_mat_name = neon_mats[random_int(0, max_idx)];*/
+	//				geometry = master_cube;
+	//				//scale
+	//				scale_v = vec3(0.4, random_double(0.4, 1.0), 0.4);
+	//			} else if (dice_roll < 0.55) {
+	//				//30% chance to draw glass material(0.25 + 0.3 = 0.55)
+	//				selected_mat_name = (random_double() < 0.7) ? "glass" : "glass_bubble";
+	//				geometry = master_sphere;
+	//				double s = random_double(0.5, 2.0);
+	//				scale_v = vec3(s, s, s);
+	//			} else {
+	//				//45% left draw random material left materials from the list (excluding emissive/neaons using regular_mats)
+	//				int random_idx = random_int(0, static_cast<int>(regular_mats.size()) - 1);
+	//				selected_mat_name = regular_mats[random_idx];
+
+	//				if (random_double() < 0.5) {
+	//					geometry = master_sphere;
+	//				} else {
+	//					geometry = master_cube;
+	//				}
+	//				//scale to difference
+	//				double s = random_double(0.4, 1.5);
+	//				scale_v = vec3(s, s, s);
+
+	//			}
+	//			//2. get material
+	//			auto obj_mat = mat_lib.get(selected_mat_name);
+
+	//			//3. scale
+	//			auto scaled_obj = make_shared<scale>(geometry, scale_v);
+	//			//4. rotation (only cubes)
+	//			shared_ptr<hittable> rotated_obj = scaled_obj;
+	//			if (geometry == master_cube) {
+	//				rotated_obj = make_shared<rotate_y>(scaled_obj, random_double(0.0, 90.0));
+	//			}
+
+	//			//5. applying material to the instance through material_instance class
+	//			auto instance = make_shared<material_instance>(rotated_obj, obj_mat);
+	//			//3. final position translation
+	//			world.add(make_shared<translate>(instance, center));
+	//		}
+	//	}
+	//}
 
 	// - 5. environmental fog
 	if (use_fog) {

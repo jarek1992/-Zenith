@@ -1011,7 +1011,7 @@ int main(int argc, char* argv[]) {
 
 				//BVH button
 				ImGui::SameLine();
-				if (ImGui::Button("V", ImVec2(30, 30))) {
+				if (ImGui::Button("BVH", ImVec2(30, 30))) {
 					my_post.debug.bvh = !my_post.debug.bvh;
 
 					global_settings::bvh_debug_mode = my_post.debug.bvh;
@@ -1473,10 +1473,13 @@ int main(int argc, char* argv[]) {
 				color(cam.fog_color[0], cam.fog_color[1], cam.fog_color[2])
 			);
 
-			//update BVH for a new geometry(fog included)
 			bvh_world = make_shared<bvh_node>(world);
-			engine_info.add_log("[System] Scene geometry rebuilt. BVH acceleration structure updated.");
 
+			//update BVH for a new geometry(fog included)
+			if (!ImGui::IsAnyItemActive()) {
+				engine_info.add_log("[System] Scene geometry rebuilt. BVH acceleration structure updated.");
+			}
+			
 			//reset accumulator and sample count 
 			cam.reset_accumulator();
 
@@ -1485,8 +1488,9 @@ int main(int argc, char* argv[]) {
 			if (cam.image_height < 1) {
 				cam.image_height = 1;
 			}
-
-			engine_info.add_log("[Render] Thread launched. Target resolution: %dx%d", cam.image_width, cam.image_height);
+			if (!ImGui::IsAnyItemActive()) {
+				engine_info.add_log("[Render] Thread launched. Target resolution: %dx%d", cam.image_width, cam.image_height);
+			}
 			//launch the new thread
 			is_rendering = true;
 			render_thread = std::thread([&is_rendering, &cam, bvh_world, env, my_post, &last_render_duration, render_start_time]() {

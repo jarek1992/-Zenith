@@ -49,7 +49,9 @@ public:
 
 		//copy interval only for tests AABB and frames 
 		interval bbox_t = ray_t;
-		if (!bbox.hit(r, bbox_t)) return false;
+		if (!bbox.hit(r, bbox_t)) { 
+			return false; 
+		}
 
 		if (debug_wire) {
 			//entry point calculated basing on bbox_t.min
@@ -102,7 +104,9 @@ public:
 
 		//standard path without debbuging
 		bool hit_left = left->hit(r, ray_t, rec, depth + 1, false);
-		if (hit_left) ray_t.max = rec.t;
+		if (hit_left) { 
+			ray_t.max = rec.t; 
+		}
 		bool hit_right = right->hit(r, ray_t, rec, depth + 1, false);
 		return hit_left || hit_right;
 	}
