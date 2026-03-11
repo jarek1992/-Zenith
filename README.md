@@ -46,7 +46,7 @@ inline color apply_aces(color x) {
 ```
   <li><b>Data Structures:</b> <b>BVH(Bounding Volume Hierarchy)</b> – optimizes ray-object intersection tests from <i>O(N)</i> to <i>O(logN)</i>.</li>
   <br>
-  <img width="913" height="263" alt="aabb_bvh_diagram" src="https://github.com/user-attachments/assets/e1ab5901-e8a3-436d-ae58-e038604373d2" />
+  <img width="1000" alt="aabb_bvh_diagram" src="https://github.com/user-attachments/assets/e1ab5901-e8a3-436d-ae58-e038604373d2" />
   <p><i>Spatial bounding volume hierarchy (BVH) reduces the complexity of collision tests from <b>O(N)</b> to <b>O(log N)</b> through recursive division of the scene into containers AABB.</i></p>
   <br>
   <li>
@@ -81,7 +81,7 @@ if (ImGui::IsItemDeactivatedAfterEdit()) {
 | Interactive Navigation | *Smooth 3D space movement and orientation* | *LookAt, LookFrom, Up Vector* |
 | Anti-aliasing(AA) | *<b>Sub-pixel jittering</b> eliminates jagged edges by slightly <br>offsetting rays within each pixel footprint, <br>resulting in smooth, film-like edges* | *Stratified Sampling (per pixel)* |
 
-<img width="1200" height="386" alt="CAMERA OPTICS - aperature=3 0 focus_distance=3 0, 9 0, 18 0" src="https://github.com/user-attachments/assets/a3e7ce46-552f-4037-bd15-76bc5a82f58d" />
+<img width="840" alt="CAMERA OPTICS - aperature=3 0 focus_distance=3 0, 9 0, 18 0" src="https://github.com/user-attachments/assets/a3e7ce46-552f-4037-bd15-76bc5a82f58d" />
 <p><i>Aperature 3.0, Focus_distance 3.0 &emsp;&emsp;&emsp;&emsp;&emsp; Aperature 3.0, Focus_distance 9.0 &emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; Aperature 3.0, Focus_distance 18.0.</i></p>
 </ul>
 </details>
@@ -169,7 +169,7 @@ if (ImGui::IsItemDeactivatedAfterEdit()) {
   <details>
     <summary><b>Cinematic Post-Process Pipeline</b></summary>
     <p>Beyond path tracing, the engine includes a high-performance post-processing stack to achieve a production-ready look.</p>
-	  <img width="1200" height="337" alt="Cinematic Post-Process Pipeline_before after" src="https://github.com/user-attachments/assets/bffa55eb-9a8a-41d5-911a-3197f60de41a" />
+	  <img width="850" alt="Cinematic Post-Process Pipeline_before after" src="https://github.com/user-attachments/assets/bffa55eb-9a8a-41d5-911a-3197f60de41a" />
 	  <p><i>Raw image | Image with post-production(Aces + Bloom  etc...)</i></p>
       <ul>     
         <li><b>ACES Tone Mapping:</b>Implementation of the Academy Color Encoding System to transform High Dynamic Range (HDR) data into cinematic Low Dynamic Range (LDR) output.</li>
@@ -177,12 +177,10 @@ if (ImGui::IsItemDeactivatedAfterEdit()) {
         <li><b>Exposure Control:</b>
       <ul>
         <li><b>Auto-Exposure:</b><i> Note: Dynamically calculates scene luminance to adjust brightness.</li></i>
-			<ul>
 			<p></p>
 
-![Image](https://github.com/user-attachments/assets/83e6f9cd-5c3a-4c76-8021-afb5171a4bab)<br>
+<img src="https://github.com/user-attachments/assets/83e6f9cd-5c3a-4c76-8021-afb5171a4bab" width="580"><br>
 <i>Luminance Histogram: auto-exposure is dynamically adjusted based on real image data</i>
-          </ul>
         <li><b>EV Compensation:</b><i> Photographic control allowing for ±5.0 stops of brightness adjustment.</li></i>
       </ul>
         </li>
@@ -302,7 +300,7 @@ if (use_fog) {
 | **Luminance** | *Brightness map* | *Analyze the input for the Auto-Exposure algorithm* |
 | **BVH Mode** | *Spatial Hierarchy* | *Audit tree health and node culling directly from the UI.* |
 
-<img width="1200" height="600" alt="Diagnostic G-Buffer_Modes" src="https://github.com/user-attachments/assets/416e2929-660a-489c-a632-d0a4b2508484" />
+<img width="703" alt="Diagnostic G-Buffer_Modes" src="https://github.com/user-attachments/assets/416e2929-660a-489c-a632-d0a4b2508484" />
 <p><i>Render modes: RGB/Albedo/Normals/Z-depth/Luminance/BVH Wireframe</i></p>
   </ul>
   </details>
@@ -312,8 +310,8 @@ if (use_fog) {
   <details>
     <summary><b>Real-Time Analytics & Control</b></summary>
     <p>Professional tools for lighting and exposure management.</p>
-    
-![Real-Time Analytics   Control](https://github.com/user-attachments/assets/33dfa5b4-97e3-4d90-a068-307790f3da12)<br>
+
+<img src="https://github.com/user-attachments/assets/33dfa5b4-97e3-4d90-a068-307790f3da12" width="410"><br>
 <i>Monitor the brightness distribution in real-time. This allows you to prevent highlight clipping and ensure that the <b>ACES Tone Mapping</b> has enough dynamic range to work with.</i>
     
   <ul>
@@ -331,7 +329,7 @@ if (use_fog) {
     <summary><b>Fluid Interaction System</b></summary>
     <p>The engine features a deeply integrated communication layer between the Dear ImGui interface and the rendering core, focusing on a seamless user experience.</p>
 
-![Fluid Interaction System](https://github.com/user-attachments/assets/619d38ba-a8b2-41bd-832a-af8378d3b054)<br>
+<img src="https://github.com/user-attachments/assets/619d38ba-a8b2-41bd-832a-af8378d3b054" width="410"><br>
 <i>Smooth changes between render passes</i>
     <ul>
       <li><b>Smart Accumulator Sync:</b> To prevent constant frame flickering during UI interaction, the path-tracing accumulator only resets when a change is "finalized" (utilizing <code>IsItemDeactivatedAfterEdit</code>). This allows you to explore parameters smoothly, with the engine only committing to a full re-render once you release a slider.</li>
@@ -496,8 +494,8 @@ cmake --build build --config Release
       <li><b>Adaptive Auxiliary Sampling:</b> To optimize bandwidth and compute cycles, the engine uses a decoupled sampling strategy. While the <b>Beauty Pass</b> uses full <code>samples_per_pixel</code>, the auxiliary buffers (Albedo, Normals, Z-Depth) are computed using a clamped subset of samples, drastically reducing overhead without sacrificing denoising quality.</li>
       <li><b>Live Progress Feedback:</b> Real-time synchronization between the rendering threads and the UI layer provides immediate visual feedback on the render's progress via atomic line-counting.</li>
 <p></p>
-		
-![Multi-Threaded Rendering Core](https://github.com/user-attachments/assets/cd6e741a-f25f-4dba-81d9-e1c557551a8c)<br>
+
+<img src="https://github.com/user-attachments/assets/cd6e741a-f25f-4dba-81d9-e1c557551a8c" width="420"><br>
 <i>Progressive refinement with scanline rendering and progress bar</i>
 
   </ul>
@@ -514,7 +512,7 @@ cmake --build build --config Release
       <li><b>Performance Gain:</b> High-quality 1080p renders that would normally take minutes are usable in seconds.</li>
 		<p></p>
 
-![AI-Accelerated Denosing (Intel OIDN)](https://github.com/user-attachments/assets/39da0343-6fda-4acb-85e3-eeaba9466825)<br>
+<img src="https://github.com/user-attachments/assets/39da0343-6fda-4acb-85e3-eeaba9466825" width="420"><br>
 <i>RGB Denoiser before/after</i>     
   </ul>
   </details>
@@ -550,7 +548,9 @@ cmake --build build --config Release
 | **Level Sliders** | *Scans the hierarchy depth-by-depth to verify spatial partitioning.* | 
 | **Leaf Isolation** | *Special mode (<code>Level: -1</code>) that highlights only the final leaf nodes<br> wrapping individual primitives.* |
 
-    IMAGE: Obrazki z wlaczonymi roznymi levelami boxów.      
+<img width="645" alt="Bounding Volume Hierarchy (BVH)_level_1-6" src="https://github.com/user-attachments/assets/5f599d53-fbed-40d1-bb99-c606d1742522" /><br>
+<i>BVH tree levels example on "sphere's funnel"</i>
+     
 </ul>
 </details>
 </ul>
@@ -560,18 +560,16 @@ cmake --build build --config Release
    <summary><b>Dirty Flags & State Management</b></summary>
     <p>To avoid redundant calculations and ensure a fluid UI, the engine utilizes a <b>Dity Flag System</b> to track changes in the scene.</p>
     <ul>
-      <li><b>Selective Re-renders:</b> Instead of blindly resetting the path-tracing accumulator every frame, the engine only triggers a reset when a "Dirty Flag" is raised (e.g., when a light is moved, a material is changed, or the camera is rotated).</li>
+      <li><b>Selective Re-renders:</b> Instead of blindly resetting the path-tracing accumulator every frame, the engine only triggers a reset when a "Dirty Flag" is raised (e.g., when any of light parameter is changed, mode has been switched to BVH or back RGB and one of the camera parameter is changed).</li>
       <li><b>UI Synchronization:</b> Integrating with <b>Dear ImGui</b>, the engine uses <code>IsItemDeactivatedAfterEdit</code> to mark data as "dirty" only when the user finishes an interaction. This allows you to slide values smoothly.</li>
       <li><b>Resource Efficiency:</b> If no flags are dirty, the engine focuses 100% of its power on accumulating samples for the current frame, leading to rapid noise disappearance.</li>
+<p></p>
 
-      IMAGE: Nagranie ekranu np. zmiana koloru światła 
-      (Pokazanie, że gdy tylko puścisz suwak, obraz zaczyna się 
-      natychmiast "oczyszczać" (akumulować). 
-      To udowodni działanie IsItemDeactivatedAfterEdit.)
-      
-  </ul>
-  </details>
-  </ul>
+<img src="https://github.com/user-attachments/assets/386975a3-0f4f-4773-bddb-87f79637cf03" width="680"><br>
+<i><code>IsItemDeactivatedAfterEdit</code> resets accumulator when release a slidder</i>    
+</ul>
+</details>
+</ul>
 
   <ul style="list-style-type: none;">
   <details>
@@ -586,36 +584,21 @@ cmake --build build --config Release
 | **Denoising** | *Intel OIDN 2.3* | *Clean images at 10-20 samples per pixel* |
 | **UI Overhead** | *Minimal* | *Zero-copy frame buffer updates via Glad/OpenGL* |
 
-    IMAGE: Mały zrzut ekranu z zakładki "Wydajność" w Windows, 
-    gdzie wszystkie logiczne rdzenie (w moim przypadku 20 wątków i7-12700F) są obciążone na 100%.      
+<img src="https://github.com/user-attachments/assets/443a6aa1-696f-4539-a5ea-d8820b62d76a" width="680"><br>
+<i>As soon as the render starts all the logical processors hit their maximum utilization to accelerate render speed</i>
 </ul>
 </details>
 </ul>
 
-### 📸 Gallery & Showcase
-
-<p>1.GIF showing real-time sun movement.</p>
-<p>2. Screenshots of the G-Buffer passes.</p>
-<br>
-<p>Final renders comparing ACES On/Off and Bloom effects.</p>
-<ul>
-  <p>3. Indoor Scene: Highlighting Global Illumination, soft shadows from area lights, and color bleeding.</p>
-  <p>4. Macro Photography: Showcasing the Thin-Lens model with extreme Bokeh and high-precision focus.</p>
-  <p>5. Exterior Sunlight: Demonstrating the Astronomical Day-Night cycle and Rayleigh Scattering.</p>
-</ul>
-
-### 🖥 Interface in Action
-
-    GIF-a pokazujący jak slider godziny (słońce się porusza) lub jak zmienia sie tryby G-Buffera.
 ### 📊 Real-time Analytics
 - <b>Luminance Histogram:</b> A real-time distribution of pixel brightness, used to calibrate the Auto-Exposure and prevent highlight clipping.
 <ul>
-  <p><code>IMAGE/GIF: screenshot z histogramem i aktywnymi kanałami RGB.</code></p>
+	<img width="540" alt="Real-time Analytics_Luminance Histogram" src="https://github.com/user-attachments/assets/c66a6ebf-5d94-41c0-beaf-6afb5d470b6c" />
 </ul>
 
 - <b>G-Buffer Suite:</b> Toggle between Albedo, Normals, and Z-Depth passes to inspect the scene's geometric health.
 <ul>
-  <p><code>IMAGE/GIF: przelaczanie sie miedzy passami albedo, normals i z-depth.</code></p>
+	<img src="https://github.com/user-attachments/assets/8020174f-9ce7-418a-aa46-5fe039869085" width="540"><br>
 </ul>
 
 - <b>Frame Profiler:</b> Engineered for maximum throughput. The engine utilizes all logical CPU cores via OpenMP, providing real-time progress tracking via atomic line counters for smooth UI updates.
@@ -630,6 +613,28 @@ cmake --build build --config Release
   }
 ```
 </ul>
+
+### 📸 Gallery & Showcase
+
+<img src="https://github.com/user-attachments/assets/43df4892-c557-4387-9ff0-366a726a0a7a" width="740"><br>
+<i>Astronomical real-time sun movement </i>
+<br>
+<br>
+<img width="740" alt="Gallery   Showcase_render_debug_views" src="https://github.com/user-attachments/assets/57b753c5-f19e-4abd-914d-17841371aa8b" /><br>
+<i>Render debug channels </i>
+<br>
+<br>
+<img width="740" alt="Gallery   Showcase_Exterior Sunlight_Sunset" src="https://github.com/user-attachments/assets/73c05c49-e1a5-463c-8a93-3720364abd25" /><br>
+<i>Exterior sunlight/sunset views</i>
+<br>
+<br>
+<img width="370" alt="Gallery   Showcase_Indoor Scene" src="https://github.com/user-attachments/assets/38f3abd3-6430-44d7-8ab0-f1ab04ff6659" /><br>
+<i>Indoor render</i>
+<br>
+<br>
+<img width="370" alt="Gallery   Showcase_Macro Photography" src="https://github.com/user-attachments/assets/8af36bde-4ca5-401c-9d40-69a0bd6ee39a" /><br>
+<i>Macro Photography</i>
+<br>
 
 ### 🗺 Future Roadmap
 Where the project is headed. Contributions and suggestions are welcome!
