@@ -54,9 +54,13 @@ public:
 		}
 
 		if (debug_wire) {
+			//check the edges on entry point(min) and exit point(max) 
 			//entry point calculated basing on bbox_t.min
-			point3 p_entry = r.at(bbox_t.min);
-			bool is_leaf = (left == nullptr && right == nullptr);
+			point3 p_entry = r.at(bbox_t.min + 0.0001f);
+			//exit point calculated basing on bbox_t.max
+			point3 p_exit = r.at(bbox_t.max - 0.0001f);
+
+			bool is_leaf = (std::dynamic_pointer_cast<bvh_node>(left) == nullptr);
 
 			//increased thickness for better visibility
 			float perspective_thickness = global_settings::bvh_thickness * (0.05f + bbox_t.min * 0.1f);
@@ -65,23 +69,21 @@ public:
 											: (depth == global_settings::debug_bvh_level);
 
 			//draw the frames
-			if (is_current_debug_level && bbox.is_on_edge(p_entry, perspective_thickness)) {
-				rec.t = bbox_t.min - 0.0001f;
-				rec.p = p_entry;
-				rec.normal = vec3(0, 0, 1);
+			if (is_current_debug_level) {
+				if (bbox.is_on_edge(p_entry, perspective_thickness) ||
+					bbox.is_on_edge(p_exit, perspective_thickness)) {
+					rec.t = (bbox.is_on_edge(p_entry, perspective_thickness)) ? bbox_t.min : bbox_t.max;
+					rec.p = r.at(rec.t);
+					rec.normal = vec3(0, 0, 1);
 
-				float g = std::min(depth * 0.15f, 1.0f);
-				float brightness = 4.0f;
+					float g = std::min(depth * 0.15f, 1.0f);
+					float brightness = 4.0f;
 
-				color base_color = color(0.4f, g, (1.0f - g));
-				color debug_color = base_color * brightness;
-				rec.mat = make_shared<diffuse_light>(debug_color);
-				return true;
-			}
-
-			//recursion
-			if (is_leaf) { 
-				return false; 
+					color base_color = color(0.4f, g, (1.0f - g));
+					color debug_color = base_color * brightness;
+					rec.mat = make_shared<diffuse_light>(debug_color);
+					return true;
+				}
 			}
 
 			bool hit_left = left->hit(r, ray_t, rec, depth + 1, debug_wire);
@@ -90,13 +92,18 @@ public:
 			}
 			bool hit_right = right->hit(r, ray_t, rec, depth + 1, debug_wire);
 
-			bool hit_anything = hit_left || hit_right;
+			bool hit_anything =  hit_left || hit_right;
 
 			//volumes
 			if (hit_anything && is_current_debug_level) {
 				float g = std::min(depth * 0.15f, 1.0f);
 				color volume_color = color(0.4f, g, (1.0f - g)) * 0.1f;
 				rec.mat = make_shared<diffuse_light>(volume_color);
+			}
+
+			//standard path without debugging
+			if (left == nullptr || right == nullptr) { 
+				return false; 
 			}
 
 			return hit_anything;

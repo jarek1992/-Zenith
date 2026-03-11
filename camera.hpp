@@ -946,11 +946,10 @@ private:
 
 			if (global_settings::bvh_debug_mode) {
 				//if we hit the frame (emitted > 0) = fully smitted
-				if (emitted.length() > 0.001) {
+				if (emitted.length() > 0.1) {
 					return emitted;
 				}
-				//if hit a geometry that is not highlighted(emitted == 0)
-				//make it very dark and semi-transparent visually
+				//hit the geometry return dark color to avoid transculency of objects
 				return color(0.01, 0.01, 0.01);
 			}
 

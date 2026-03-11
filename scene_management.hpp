@@ -105,11 +105,15 @@ hittable_list build_geometry(MaterialLibrary& mat_lib, const sceneAssetsLoader& 
 	hittable_list world;
 
 	// - 1. FLOOR -
-	auto ground_geom = make_shared<sphere>(point3(0.0, -1000.0, 0.0), 1000.0, nullptr);
-	world.add(make_shared<material_instance>(ground_geom, mat_lib.get("reflective_checker_mat")));
+	/*auto ground_geom = make_shared<sphere>(point3(0.0, -1000.0, 0.0), 1000.0, nullptr);
+	world.add(make_shared<material_instance>(ground_geom, mat_lib.get("reflective_checker_mat")));*/
 
-	auto big_cube_geom = make_shared<cube>(point3(-4.0, -0.1, -4.0), point3(4.0, 0.1, 4.0), nullptr);
-	auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("black_diffuse"));
+	auto ground_plane = make_shared<cube>(point3(-2.0, 0.0, -2.0), point3(2.0, 0.0, 2.0), nullptr);
+	auto ground_plane_inst = make_shared<material_instance>(ground_plane, mat_lib.get("reflective_checker_mat"));
+	world.add(make_shared<translate>(ground_plane_inst, point3(5.0, 0.0, 0.0)));
+
+	/*auto big_cube_geom = make_shared<cube>(point3(-4.0, -0.1, -4.0), point3(4.0, 0.1, 4.0), nullptr);
+	auto big_cube_instance = make_shared<material_instance>(big_cube_geom, mat_lib.get("black_diffuse"));*/
 
 	//// SUFIT I PODŁOGA (oś Y)
 	//world.add(make_shared<translate>(big_cube_instance, point3(0.0, 5.0, 2.5)));
@@ -124,16 +128,16 @@ hittable_list build_geometry(MaterialLibrary& mat_lib, const sceneAssetsLoader& 
 	//world.add(make_shared<translate>(wall_x_rot, point3(0.0, 1.0, -1.5)));
 	//world.add(make_shared<translate>(wall_x_rot, point3(0.0, 1.0, 6.5)));
 
-	auto torus_knot_instance = make_shared<material_instance>(assets.torus_knot, mat_lib.get("wood_texture"));
-	auto torus_knot_scale = make_shared<scale>(torus_knot_instance, vec3(1.3, 1.3, 1.3));
-	auto torus_knot_final = make_shared<translate>(torus_knot_scale, point3(1.0, 0.0, 2.0));
-	world.add(torus_knot_final);
+	//auto torus_knot_instance = make_shared<material_instance>(assets.torus_knot, mat_lib.get("wood_texture"));
+	//auto torus_knot_scale = make_shared<scale>(torus_knot_instance, vec3(1.3, 1.3, 1.3));
+	//auto torus_knot_final = make_shared<translate>(torus_knot_scale, point3(1.0, 0.0, 2.0));
+	//world.add(torus_knot_final);
 
-	auto teapot_inst = make_shared<material_instance>(assets.teapot, mat_lib.get("glass"));
-	auto rot_teapot_x = make_shared<rotate_x>(teapot_inst, -90.0);
-	auto rot_teapot_y = make_shared<rotate_y>(rot_teapot_x, 30.0);
-	auto teapot_final = make_shared<translate>(rot_teapot_y, point3(0.0, 1.0, -2.0));
-	world.add(teapot_final);
+	//auto teapot_inst = make_shared<material_instance>(assets.teapot, mat_lib.get("glass"));
+	//auto rot_teapot_x = make_shared<rotate_x>(teapot_inst, -90.0);
+	//auto rot_teapot_y = make_shared<rotate_y>(rot_teapot_x, 30.0);
+	//auto teapot_final = make_shared<translate>(rot_teapot_y, point3(0.0, 1.0, -2.0));
+	//world.add(teapot_final);
 
 	//// - 4. LIGHT PLANE 
 	//auto light_geom = make_shared<cube>(point3(-0.5, -0.05, -0.5), point3(0.5, 0.05, 0.5), nullptr);
@@ -150,24 +154,25 @@ hittable_list build_geometry(MaterialLibrary& mat_lib, const sceneAssetsLoader& 
 	//world.add(make_shared<translate>(light_instance2_z_rot, point3(2.0, 3.0, 2.5)));
 
 
-	//int num_sphere = 64;
-	//for (int i = 0; i < num_sphere; i++) {
-	//	float fraction = static_cast<float>(i) / num_sphere;
+	int num_sphere = 64;
+	float sphere_radius = 0.3f;
 
-	//	float y_offset = 7.0f; 
+	for (int i = 0; i < num_sphere; i++) {
+		float fraction = static_cast<float>(i) / num_sphere;
 
-	//	float radius = 5.0f * fraction;
-	//	float angle = i * 8.0f;
-	//	float height = (fraction * 10.0f - 5.0f) + y_offset;
+		float radius = 5.0f * fraction;
+		float angle = i * 8.0f;
 
-	//	float x = radius * cos(angle);
-	//	float y = height;
-	//	float z = -14.0f + radius * sin(angle);
-	//	
-	//	auto sphere_1 = make_shared<sphere>(point3(x, y, z), 0.3, nullptr);
-	//	auto sphere_inst = make_shared<material_instance>(sphere_1, mat_lib.get("white_diffuse"));
-	//	world.add(sphere_inst);
-	//}
+		float height = 0.0f + sphere_radius + (fraction * 10.0f);
+
+		float x = radius * cos(angle);
+		float y = height;
+		float z = -14.0f + radius * sin(angle);
+		
+		auto sphere_1 = make_shared<sphere>(point3(x, y, z), sphere_radius, nullptr);
+		auto sphere_inst = make_shared<material_instance>(sphere_1, mat_lib.get("white_diffuse"));
+		world.add(make_shared<translate>(sphere_inst, point3(5.0, 0.0, 2.0)));
+	}
 
 	////cube
 	//auto big_cube_geom = make_shared<cube>(point3(0.0, 0.0, 0.0), nullptr);

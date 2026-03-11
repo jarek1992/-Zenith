@@ -66,12 +66,21 @@ public:
 	}
 
 	bool is_on_edge(const point3& p, double thickness) const {
-		//check if the point is inside the small margin at each wall
-		auto x_edge = (p.x() < x.min + thickness) || (p.x() > x.max - thickness);
-		auto y_edge = (p.y() < y.min + thickness) || (p.y() > y.max - thickness);
-		auto z_edge = (p.z() < z.min + thickness) || (p.z() > z.max - thickness);
+		//check the distance between point and all 6 walls
+		bool x_low = std::abs(p.x() - x.min) < thickness;
+		bool x_high = std::abs(p.x() - x.max) < thickness;
+		bool y_low = std::abs(p.y() - y.min) < thickness;
+		bool y_high = std::abs(p.y() - y.max) < thickness;
+		bool z_low = std::abs(p.z() - z.min) < thickness;
+		bool z_high = std::abs(p.z() - z.max) < thickness;
 
-		return (x_edge && y_edge) || (x_edge && z_edge) || (y_edge && z_edge);
+		// point is on the edge if its close enough at least 2 planes
+		int proximity_count = (x_low || x_high) + (y_low || y_high) + (z_low || z_high);
+
+		//if we hit corner (3) or edge (2)
+		if (proximity_count >= 2) return true;
+
+		return false;
 	}
 };
 
