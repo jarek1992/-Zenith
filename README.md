@@ -424,7 +424,7 @@ cd .\-Zenith\
     <li><b>macOS / Linux (System Package)</b><br>
       On these systems, OIDN is handled globally. Run:
       <ul style="margin-top: 0; padding-top: 0; margin-left: 20px;">
-        <li><b>macOS:</b> <code>brew install openimagedenoise sdl3</code></li>
+        <li><b>macOS:</b> <code>brew install open-image-denoise sdl3</code></li>
         <li><b>Linux (Ubuntu/Debian):</b> <code>sudo apt install libopenimagedenoise-dev libsdl3-dev</code></li>
       </ul>
     </li>
