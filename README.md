@@ -395,42 +395,70 @@ if (use_fog) {
         <b>1. Clone the Repository</b>
         <p>Clone the project along with the vcpkg submodule: </p>
 
-```cpp	
-git clone --recursive https://github.com/jarek1992/-Zenith.git
-cd .\-Zenith\ 
-```
-  <p><i>Note: If you downloaded the repo without <code>--recursive</code>, run <code>git submodule update --init --recursive</code> inside the project folder to fetch vcpkg.</i></p>
-  </p>
+	git clone --recursive https://github.com/jarek1992/-Zenith.git
+<p><i>Note: If you downloaded the repo without <code>--recursive</code>, run <code>git submodule update --init --recursive</code> inside the project folder to fetch vcpkg.</i></p>
+<ul>
+	<li><b>Windows:</b></li>
+		
+	cd .\-Zenith\ 
+<li><b>Linux/MacOS:</b></li>
+	
+	cd -Zenith/
+</ul>
   </div>
-
   <div style="margin-left: 20px;">
   <b>2. Install Dependencies(System Specific)</b>
-  <p>Since OIDN binaries are platform-specific and large, they are not included in the repository.</p>
-  
-  <ul style="list-style-type: disc; margin-left: 20px;">
-  <b><li>Windows (Manual OIDN)</b></li>
-    <ul>
-      <div style="margin-left: 20px;">
-        a. <b>Download</b> <code>oidn-2.3.0.x64.vc14.windows.zip</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
-        b. <b>Extract</b> the contents so the structure looks like this:
-        <ul style="margin-top: 0; padding-top: 0;">
-          <li><code>libs/oidn/bin/</code> (contains <code>.dll</code> files)</li>
-          <li><code>libs/oidn/include/</code> (contains headers)</li>
-          <li><code>libs/oidn/lib/</code> (contains <code>.lib</code> files)</li>
-        </ul>
-      </div>
-    </ul>
-    <br>
-    <li><b>macOS / Linux (System Package)</b><br>
-      On these systems, OIDN is handled globally. Run:
-      <ul style="margin-top: 0; padding-top: 0; margin-left: 20px;">
-        <li><b>macOS:</b> <code>brew install open-image-denoise sdl3</code></li>
-        <li><b>Linux (Ubuntu/Debian):</b> <code>sudo apt install libopenimagedenoise-dev libsdl3-dev</code></li>
-      </ul>
-    </li>
-  </ul>
-  <br>
-
+  <p>Since OIDN binaries are platform-specific and large, they are not included in the repository.</p>	  
+  <ul style="list-style-type: none;">
+	  <details>
+		  <summary><b>Windows (Manual OIDN)</b></summary>
+			  <ul>
+				  <div style="margin-left: 20px;">
+					  a. <b>Download</b> <code>oidn-2.3.0.x64.vc14.windows.zip</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+					  b. <b>Extract</b> the contents so the structure looks like this:
+					  <ul style="margin-top: 0; padding-top: 0;">
+						  <li><code>libs/oidn/bin/</code> (contains <code>.dll</code> files)</li>
+						  <li><code>libs/oidn/include/</code> (contains headers)</li>
+						  <li><code>libs/oidn/lib/</code> (contains <code>.lib</code> files)</li>
+					  </ul>
+				  </div>
+			  </details>
+		<details>
+			<summary><b>Linux (Ubuntu/Debian-based)</b></summary>
+			<ul>
+				<p>a. <b>Run</b> command in the terminal to install required dependencies:</p>
+					  
+	sudo apt update && sudo apt install -y \
+    build-essential cmake ninja-build tar curl zip unzip pkg-config \
+    libx11-dev libwayland-dev libglu1-mesa-dev \
+    libxkbcommon-dev libdbus-1-dev libibus-1.0-dev libxcursor-dev \
+    libxinerama-dev libxi-dev libxrandr-dev libxss-dev libxtst-dev	
+<div style="line-height: 1.4;">
+	b. <b>Download</b> <code>oidn-2.x-linux.tar.gz</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+    c. <b>Extract</b> the contents so the structure looks like this:
+    <div style="margin-left: 20px;">
+		<ul>
+			<li><code>libs/oidn_linux/bin/</code> (contains <code>.exe</code> files)</li>
+        	<li><code>libs/oidn_linux/include/</code> (contains headers)</li>
+        	<li><code>libs/oidn_linux/lib/</code> (contains <code>.lib</code> files)</li>
+		</ul>
+    </div>	
+</div>
+</details>
+<details>
+	<summary><b>MacOS</b></summary>
+	<ul>
+		<div style="margin-left: 20px;">
+			a. <b>Download</b> <code>name</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+			b. <b>Extract</b> the contents so the structure looks like this:
+			<ul style="margin-top: 0; padding-top: 0;">
+				<li><code>libs/oidn/bin/</code> (contains <code>.dll</code> files)</li>
+				<li><code>libs/oidn/include/</code> (contains headers)</li>
+				<li><code>libs/oidn/lib/</code> (contains <code>.lib</code> files)</li>
+			</ul>
+		</div>
+	</details>
+	</ul>
 <div style="margin-left: 20px;">
   <b>3. Bootstrap vcpkg:</b><br>
   Initialize the package manager (required for ImGui, Glad, and SDL3 on Windows):
@@ -438,21 +466,22 @@ cd .\-Zenith\
     <li><b>Windows:</b> 
       
     .\vcpkg\bootstrap-vcpkg.bat
-  <li><b>macOS/Linux:</b>
+  <li><b>Linux/MacOS:</b>
     
     ./vcpkg/bootstrap-vcpkg.sh
   </ul>
-
-  </p>
 </div>
     <div style="margin-left: 20px;">
     <b>4. Configure & Install Dependencies:</b>
     <p>Run CMake to trigger <b>vcpkg</b> and configure the build system. This will automatically download and build <b>SDL3</b>, <b>ImGui</b>, and <b>Glad</b>.</p>
+<ul>
+	<li><b>Windows:</b></li>
 
-```cpp	
-cmake -B build -S . "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake"
-```
-  </p>
+	cmake -B build -S . "-DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake"
+<li><b>Linux/MacOS:</b></li>
+
+	cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+</ul>
   </div>
     <div style="margin-left: 20px;">
     <b>5. Build the Project:</b>
@@ -470,7 +499,7 @@ cmake --build build --config Release
         <li><b>Windows:</b> 
           
     .\build\Release\zenith_path_tracer.exe
-  <li><b>macOS/Linux:</b>
+  <li><b>Linux/MacOS:</b>
     
     ./build/zenith_path_tracer
   </ul>
