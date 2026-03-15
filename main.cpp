@@ -213,8 +213,26 @@ int main(int argc, char* argv[]) {
 
 	// - WINDOW AND OPENGL INITIALIZATION FOR IMGUI DISPLAY OF THE RENDERED IMAGE -
 	SDL_Init(SDL_INIT_VIDEO);
-	SDL_Window* window = SDL_CreateWindow("-Zenith Frame_buffer", 1500, 844, SDL_WINDOW_OPENGL);
+
+#ifdef __APPLE__
+	// MacOS
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Wymagane na macOS
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#else
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
+
+	SDL_Window* window = SDL_CreateWindow("-Zenith Frame_buffer", 1500, 844, 
+		SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+
+	SDL_GL_MakeCurrent(window, gl_context); //make sure context is active
+	SDL_GL_SetSwapInterval(1); //V-Sync ON
+
 	gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
 	// - INITIALIZE IMGUI -
@@ -245,6 +263,12 @@ int main(int argc, char* argv[]) {
 		//start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL3_NewFrame();
+
+		//for MacOS with retina
+		glViewport(0, 0, 1500, 844); 
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //dark turquosie instead of black
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		ImGui::NewFrame();
 
 		bool needs_update = false; //flag to indicate if any setting changed
