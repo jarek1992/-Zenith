@@ -380,41 +380,38 @@ if (use_fog) {
 		<details>
 			<summary><b>Windows</b></summary>
 			<ul>
-				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
+				<li><b>Managed via vcpkg:</b> <code>SDL3</code>, <code>Dear ImGui</code>, <code>Glad</code>.</li>
 				<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
-				<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
+				<li><b>System:</b> OpenMP (Built-in with MSVC), OpenGL.</li>
 			</ul>
 		</details>
 		<details>
 			<summary><b>Linux(Ubuntu/Debian)</b></summary>
 			<ul>
-				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
-				<li><b>Additional required dependencies</b></li>
+				<li><b>System Tools:</b></li>
 									  
 	sudo apt update && sudo apt install -y \
-    build-essential cmake ninja-build tar curl zip unzip pkg-config \
-    libx11-dev libwayland-dev libglu1-mesa-dev \
-    libxkbcommon-dev libdbus-1-dev libibus-1.0-dev libxcursor-dev \
-    libxinerama-dev libxi-dev libxrandr-dev libxss-dev libxtst-dev	
-	
+	build-essential cmake ninja-build tar curl zip unzip pkg-config \
+	libgl1-mesa-dev libx11-dev libwayland-dev libglu1-mesa-dev \
+	libxkbcommon-dev libdbus-1-dev libibus-1-dev libxcursor-dev \
+	libxinerama-dev libxi-dev libxrandr-dev libxss-dev libxtst-dev	
+<li><b>Managed via vcpkg:</b> <code>SDL3</code>, <code>Dear ImGui</code>, <code>Glad</code>.</li>
 <li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
-<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
 			</ul>
 			</details>
 			<details>
 			<summary><b>MacOS</b></summary>
 			<p>Install via <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>:</p>
 
-	brew install cmake ninja 
-	brew install pkg-config ninja
-	brew install libomp
+	brew install cmake ninja pkg-config libomp
 <ul>
-				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
-				<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
-				<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
-			</ul>
-		</details>
-		</ul>	
+	<li><b>Managed via vcpkg:</b> <code>SDL3</code>, <code>Dear ImGui</code>, <code>Glad</code>.</li>
+	<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
+	<br>
+	<i><b>Note:</b> <code>libomp</code> is strictly required for multi-threaded rendering (OpenMP) on macOS.</i>
+</ul>
+</details>
+</ul>	
 </ul>
 
 <ul style="list-style-type: none;">
