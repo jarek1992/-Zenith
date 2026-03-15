@@ -363,8 +363,8 @@ if (use_fog) {
   <details>
     <summary><b>Software Prerequisites</b></summary>
     <ul>
-      <p><li><b>Compiler:</b> A C++20 compliant compiler (<b>MSVC 2022</b>, GCC 11+, or Clang 12+).</li>
-      <li><b>Build System:</b> <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">CMake 3.15+</a></li>
+      <p><li><b>Compiler:</b> A C++20 compliant compiler (<b>MSVC 2022</b> on Windows, <b>GCC 11+</b> on Linux, or <b>AppleClang 15+</b> on macOS).</li>
+      <li><b>Build System:</b> <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">CMake 3.15+</a> and <a href="https://ninja-build.org/" target="_blank" rel="noopener noreferrer">Ninja</a></li>
       <li><b>Package Manager:</b> <a href="https://github.com/microsoft/vcpkg" target="_blank" rel="noopener noreferrer">vcpkg</a> (included as a git submodule).</li> 
       <li><b>Version Control:</b> <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener noreferrer">Git</a> (required to manage vcpkg submodules and dependencies).</li> 
       </p>
@@ -377,13 +377,42 @@ if (use_fog) {
     <summary><b>Dependencies</b></summary>
     <p>The project relies on the following libraries. Ensure they are installed or available in your environment:</p>
     <ul>
-      <p>
-        <li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
-        <li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
-        <li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
-      </p>
-    </ul>
-  </details>
+		<details>
+			<summary><b>Windows</b></summary>
+			<ul>
+				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
+				<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
+				<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
+			</ul>
+		</details>
+		<details>
+			<summary><b>Linux(Ubuntu/Debian)</b></summary>
+			<ul>
+				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
+				<li><b>Additional required dependencies</b></li>
+									  
+	sudo apt update && sudo apt install -y \
+    build-essential cmake ninja-build tar curl zip unzip pkg-config \
+    libx11-dev libwayland-dev libglu1-mesa-dev \
+    libxkbcommon-dev libdbus-1-dev libibus-1.0-dev libxcursor-dev \
+    libxinerama-dev libxi-dev libxrandr-dev libxss-dev libxtst-dev	
+	
+<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
+<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
+			</ul>
+			</details>
+			<details>
+			<summary><b>MacOS</b></summary>
+			<p>Install via <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>:</p>
+
+	brew install cmake ninja pkg-config libomp
+<ul>
+				<li><b>Managed via vcpkg:</b> SDL3, Dear ImGui, Glad.</li>
+				<li><b>External (Manual):</b> Intel Open Image Denoise (OIDN).</li>
+				<li><b>System:</b> OpenMP (Multi-threading), OpenGL (Graphics API).</li>
+			</ul>
+		</details>
+		</ul>	
 </ul>
 
 <ul style="list-style-type: none;">
@@ -407,14 +436,14 @@ if (use_fog) {
 </ul>
   </div>
   <div style="margin-left: 20px;">
-  <b>2. Install Dependencies(System Specific)</b>
+  <b>2. Copy OIDN Manually (System Specific)</b>
   <p>Since OIDN binaries are platform-specific and large, they are not included in the repository.</p>	  
   <ul style="list-style-type: none;">
 	  <details>
 		  <summary><b>Windows (Manual OIDN)</b></summary>
 			  <ul>
 				  <div style="margin-left: 20px;">
-					  a. <b>Download</b> <code>oidn-2.3.0.x64.vc14.windows.zip</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+					  a. <b>Download</b> <code>oidn-2.x.x.x64.vc14.windows.zip</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
 					  b. <b>Extract</b> the contents so the structure looks like this:
 					  <ul style="margin-top: 0; padding-top: 0;">
 						  <li><code>libs/oidn/bin/</code> (contains <code>.dll</code> files)</li>
@@ -426,35 +455,26 @@ if (use_fog) {
 		<details>
 			<summary><b>Linux (Ubuntu/Debian-based)</b></summary>
 			<ul>
-				<p>a. <b>Run</b> command in the terminal to install required dependencies:</p>
-					  
-	sudo apt update && sudo apt install -y \
-    build-essential cmake ninja-build tar curl zip unzip pkg-config \
-    libx11-dev libwayland-dev libglu1-mesa-dev \
-    libxkbcommon-dev libdbus-1-dev libibus-1.0-dev libxcursor-dev \
-    libxinerama-dev libxi-dev libxrandr-dev libxss-dev libxtst-dev	
-<div style="line-height: 1.4;">
-	b. <b>Download</b> <code>oidn-2.x-linux.tar.gz</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
-    c. <b>Extract</b> the contents so the structure looks like this:
-    <div style="margin-left: 20px;">
-		<ul>
-			<li><code>libs/oidn_linux/bin/</code> (contains <code>.exe</code> files)</li>
-        	<li><code>libs/oidn_linux/include/</code> (contains headers)</li>
-        	<li><code>libs/oidn_linux/lib/</code> (contains <code>.lib</code> files)</li>
-		</ul>
-    </div>	
-</div>
-</details>
-<details>
+				a. <b>Download</b> <code>oidn-2.x-linux.tar.gz</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+				b. <b>Extract</b> the contents so the structure looks like this:
+				<div style="margin-left: 20px;">
+					<ul>
+						<li><code>libs/oidn_linux/bin/</code> (contains executable utilities))</li>
+        				<li><code>libs/oidn_linux/include/</code> (contains headers)</li>
+        				<li><code>libs/oidn_linux/lib/</code> (contains <code>.so</code> shared libraries)</li>
+					</ul>
+				</div>	
+			</details>
+				<details>
 	<summary><b>MacOS</b></summary>
 	<ul>
 		<div style="margin-left: 20px;">
-			a. <b>Download</b> <code>name</code> from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
+			a. <b>Download</b> <code>oidn-2.x.x.arm64.macos.tar.gz</code> for <b>Apple Silicon</b> processor or <code>oidn-2.x.x.x86_64.macos.tar.gz</code> for <b>Intel</b> processor from <a href="https://github.com/RenderKit/oidn/releases" target="_blank" rel="noopener noreferrer">Intel OIDN Releases</a><br>
 			b. <b>Extract</b> the contents so the structure looks like this:
 			<ul style="margin-top: 0; padding-top: 0;">
-				<li><code>libs/oidn/bin/</code> (contains <code>.dll</code> files)</li>
+				<li><code>libs/oidn/bin/</code> (contains executable utilities)</li>
 				<li><code>libs/oidn/include/</code> (contains headers)</li>
-				<li><code>libs/oidn/lib/</code> (contains <code>.lib</code> files)</li>
+				<li><code>libs/oidn/lib/</code> (contains <code>.dylib</code> files)</li>
 			</ul>
 		</div>
 	</details>
